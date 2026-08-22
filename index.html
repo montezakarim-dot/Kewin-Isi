@@ -1,0 +1,645 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kewin & Isi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Satisfy&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Color para navegadores moviles -->
+<meta name="theme-color" content="#FFFCF8">
+
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
+  rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet">
+</head>
+
+<body class="preload">
+
+<div class="loader" id="loader">
+  <div class="loader-content">
+    <div class="loader-corazon" id="loaderCorazon"></div>
+      <h1 class="loader-title">Kewin <span>&</span> Isi</h1>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar" id="loaderBar"></div>
+    </div>
+    <p class="loader-hint">Cargando tu invitación...</p>
+  </div>
+  <!-- DESTELLOS -->
+  <div class="sparkles" id="sparkles"></div>
+  <!-- Destellos globales dorados -->
+<div class="sparkles-global" id="sparklesGlobal"></div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="eyebrow_overlay">Estás invitado/a al matrimonio de: </div>
+    <h1 class="title-xl">Kewin <span><br>&<br></span>Isi</h1>
+        <div class="buttons">
+         <button class="btn" onclick="enterSite(true)">
+  Abrir invitación
+</button>
+    </div>
+  </div>
+</div>
+<!-- ══════════════════════════════════════════
+     MENÚ DE NAVEGACIÓN
+══════════════════════════════════════════ -->
+<header class="top-nav" id="topNav">
+  <div class="nav-logo">
+    K <span>&</span> I
+  </div>
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    type="button"
+    aria-label="Abrir menú"
+    aria-expanded="false"
+    onclick="toggleMenu()"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</header>
+<nav class="menu-panel" id="menuPanel">
+  <div class="menu-header">
+    <div class="menu-brand">
+      Kewin <span>&</span> Isi
+    </div>
+    <button
+      class="menu-close"
+      type="button"
+      onclick="toggleMenu(false)"
+      aria-label="Cerrar menú"
+    >
+      ✕
+    </button>
+  </div>
+  <div class="menu-links">
+    <a href="#inicio" onclick="cerrarMenuYIr('inicio')">
+          Inicio
+    </a>
+    <a href="#historia" onclick="cerrarMenuYIr('historia')">
+          Nuestra historia
+    </a>
+    <a href="#detalles" onclick="cerrarMenuYIr('detalles')">
+          Detalles
+    </a>
+    <a href="#itinerario" onclick="cerrarMenuYIr('itinerario')">
+           Itinerario
+    </a>
+    <a href="#galeria" onclick="cerrarMenuYIr('galeria')">
+          Galería
+    </a>
+    <a href="#dresscode" onclick="cerrarMenuYIr('dresscode')">
+            Dress code
+    </a>
+    <a href="#regalo" onclick="cerrarMenuYIr('regalo')">
+           Regalo
+    </a>
+    <a href="#info" onclick="cerrarMenuYIr('info')">
+            Más información
+    </a>
+  </div>
+  <div class="menu-footer">
+    Kewin & Isi
+    <small>06 · 03 · 2027</small>
+  </div>
+</nav>
+<!-- HERO PRINCIPAL -->
+<section class="hero" id="inicio">
+  <div class="hero-main">
+    <div class="eyebrow">
+      ¡Nos casamos!
+    </div>
+    <h1 class="title-xl">
+      Kewin
+      <span><br>&<br></span>
+      Isi
+    </h1>
+    <p class="lead">
+      <br> Y queremos invitarlos a compartir este momento especial
+      con nosotros...
+    </p>
+  </div>
+</section>
+
+<!-- FECHA + COUNTDOWN -->
+<section class="hero-countdown">
+  <div class="hero-countdown-inner">
+    <p class="hero-esperamos">
+      Te esperamos
+    </p>
+    <p class="hero-fecha">
+      Marzo 06 · 2027
+    </p>
+    <p class="hero-frase">
+      La fecha se acerca —
+      <em>
+        ¡Cada vez falta menos para celebrar todos juntos
+        este mágico día!
+      </em>
+    </p>
+    <div class="countdown" id="countdown"></div>
+  </div>
+</section>
+
+<!-- NUESTRA HISTORIA -->
+<section class="section-historia" id="historia">
+  <div class="container center">
+    <div class="eyebrow purple">Cada historia de amor es hermosa, pero la nuestra es nuestra favorita.</div>
+    <div class="arch-photo-wrap">
+      <div class="arch-photo"></div>
+    </div>
+    <h2 class="section-title">De una conversación a una vida juntos...</h2>
+    <p class="story-text"><br>
+      Nuestra historia comenzó gracias a una inesperada conexión entre nuestras familias.<br>
+      Ella de Santiago y él de Concepción, dos ciudades separadas por kilómetros, pero unidas por algo mucho más importante: nuestra fe en Jehová.<br><br>
+      Lo que comenzó con una conversación se transformó en una hermosa historia de amor, amistad y compañerismo. Hoy, después de casi tres años juntos, estamos felices de dar el siguiente paso y comenzar una nueva etapa de nuestras vidas.
+    </p>
+  </div>
+</section>
+
+
+<!-- DETALLES: CEREMONIA + RECEPCIÓN -->
+<section id="detalles">
+  <div class="card center">
+    <div class="eyebrow purple">DETALLES</div>
+    <h2>Reserva la fecha</h2>
+
+    <div class="events-grid">
+
+      <!-- CEREMONIA -->
+      <div class="event-block">
+        <div class="event-icon">💍</div>
+        <h3 class="event-title">Ceremonia</h3>
+        <div class="event-detail">
+          <span class="event-label">📅 Fecha</span>
+          <span>Sábado 06 de marzo de 2027</span>
+        </div>
+        <div class="event-detail">
+          <span class="event-label">🕔 Hora</span>
+          <span>15:00 hrs</span>
+        </div>
+        <div class="event-detail">
+          <span class="event-label">🏛️ Lugar</span>
+          <span>Salón del Reino de Los Testigos de Jehová</span>
+        </div>
+        <div class="event-detail">
+          <span class="event-label">📍 Dirección</span>
+          <span>Lo campino 255, Quilicura, Santiago</span>
+        </div>
+        <div class="event-actions">
+          <a
+            class="btn-map"
+            href="https://maps.google.com/?q=Lo+Campino+255,+Quilicura,+Santiago"
+            target="_blank"
+            rel="noopener"
+            id="mapBtnCeremonia"
+          >
+            📍 Cómo llegar
+          </a>
+          <a
+            class="btn-agenda"
+            href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Ceremonia+Isidora+%26+Kewin&dates=20270306T173000/20270306T193000&details=Ceremonia+de+matrimonio&location=Las+Águilas+338,+Quilicura,+Santiago"
+            target="_blank"
+            rel="noopener"
+          >
+            🗓️ Agendar
+          </a>
+        </div>
+      </div>
+
+      
+      <!-- RECEPCIÓN -->
+      <div class="event-block">
+        <div class="event-icon">🥂</div>
+        <h3 class="event-title">Recepción</h3>
+        <div class="event-detail">
+          <span class="event-label">📅 Fecha</span>
+          <span>Sábado 06 de marzo de 2027</span>
+        </div>
+        <div class="event-detail">
+          <span class="event-label">🕖 Hora</span>
+          <span>19:30 hrs</span>
+        </div>
+        <div class="event-detail">
+          <span class="event-label">🏡 Lugar</span>
+          <span>Nombre del lugar recepción</span>
+        </div>
+        <div class="event-detail">
+          <span class="event-label">📍 Dirección</span>
+          <span>Casa Irene Eventos - La Cañada del Carmen, Lampa, Región Metropolitana</span>
+        </div>
+        <div class="event-actions">
+          <a
+            class="btn-map"
+            href="https://maps.app.goo.gl/96GkdoCJsvJ55hYd6"
+            target="_blank"
+            rel="noopener"
+            id="mapBtnRecepcion"
+          >
+            📍 Cómo llegar
+          </a>
+          <button
+            class="btn-confirm"
+            onclick="abrirRSVP()"
+          >
+            💌 Confirmar asistencia
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ══════════════════════════════════════════
+     ITINERARIO
+══════════════════════════════════════════ -->
+<section class="section-itinerario" id="itinerario">
+  <div class="container center">
+    <div class="eyebrow purple">ITINERARIO</div>
+    <h2 class="section-title">Bitácora de la celebración</h2>
+    <p class="itinerario-intro">Recuerda organizarte con tiempo para que no te pierdas ningún momento de esta ceremonia tan especial para nosotros.</p>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-icon">
+          <!-- Citación SVG -->
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+            <circle cx="24" cy="24" r="20" stroke="#9b6fc4" stroke-width="2.5" fill="none"/>
+            <path d="M24 14v10l6 4" stroke="#9b6fc4" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-time">15:00</span>
+          <span class="timeline-label">Citación</span>
+          <span class="timeline-desc">Llegada y bienvenida de los invitados</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-icon">
+          <!-- Ceremonia SVG -->
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+            <path d="M24 8 L28 18 L40 18 L30 26 L34 38 L24 30 L14 38 L18 26 L8 18 L20 18 Z" stroke="#9b6fc4" stroke-width="2" fill="none" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-time">15:30</span>
+          <span class="timeline-label">Ceremonia</span>
+          <span class="timeline-desc">El momento más esperado — ¡Sí, acepto!</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-icon">
+          <!-- Cóctel SVG -->
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+            <path d="M14 10 L24 26 L34 10 Z" stroke="#9b6fc4" stroke-width="2" fill="none" stroke-linejoin="round"/>
+            <line x1="24" y1="26" x2="24" y2="38" stroke="#9b6fc4" stroke-width="2" stroke-linecap="round"/>
+            <line x1="18" y1="38" x2="30" y2="38" stroke="#9b6fc4" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-time">16:00</span>
+          <span class="timeline-label">Cóctel</span>
+          <span class="timeline-desc">Brindis y aperitivos entre amigos y familia</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-icon">
+          <!-- Cena SVG -->
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+            <path d="M16 10 C16 10 14 18 16 22 C18 26 22 26 22 26 L22 38" stroke="#9b6fc4" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <line x1="19" y1="10" x2="19" y2="22" stroke="#9b6fc4" stroke-width="2" stroke-linecap="round"/>
+            <path d="M32 10 C32 10 36 14 36 20 C36 26 32 26 32 26 L32 38" stroke="#9b6fc4" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-time">18:00</span>
+          <span class="timeline-label">Cena</span>
+          <span class="timeline-desc">Banquete y celebración en mesa</span>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-icon">
+          <!-- Fiesta SVG -->
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+            <path d="M10 38 L20 14 L24 22 L28 10 L38 38 Z" stroke="#9b6fc4" stroke-width="2" fill="none" stroke-linejoin="round"/>
+            <circle cx="24" cy="8" r="2.5" fill="#9b6fc4"/>
+            <line x1="14" y1="30" x2="34" y2="30" stroke="#9b6fc4" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-time">20:00</span>
+          <span class="timeline-label">Fiesta</span>
+          <span class="timeline-desc">¡A bailar y celebrar toda la noche!</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ══════════════════════════════════════════
+     GALERÍA CARRUSEL
+══════════════════════════════════════════ -->
+<section class="section-galeria" id="galeria">
+  <div class="container center">
+    <div class="eyebrow purple">GALERÍA</div>
+    <h2 class="section-title">Nuestros momentos</h2>
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide">
+        <img src="I&K (1).jpg" alt="Kewin e Isi">
+        </div>
+        <div class="carousel-slide">
+        <img src="I&K (2).jpg" alt="Kewin e Isi">
+        </div>
+        <div class="carousel-slide">
+        <img src="I&K (8).jpg" alt="Kewin e Isi">
+        </div>
+        <div class="carousel-slide">
+        <img src="I&K (9).jpg" alt="Kewin e Isi">
+        </div>
+        <div class="carousel-slide">
+        <img src="I&K (5).jpg" alt="Kewin e Isi">
+        </div>
+        <div class="carousel-slide">
+        <img src="I&K (3).jpg" alt="Kewin e Isi">
+                </div>
+        <div class="carousel-slide">
+        <img src="I&K (6).jpg" alt="Kewin e Isi">
+        </div>
+        <div class="carousel-slide">
+        <img src="I&K (13).jpg" alt="Kewin e Isi">
+        </div>
+      </div>
+      <button class="carousel-btn prev" id="carouselPrev">&#8249;</button>
+      <button class="carousel-btn next" id="carouselNext">&#8250;</button>
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     DRESS CODE
+══════════════════════════════════════════ -->
+<section class="section-dresscode" id="dresscode">
+  <div class="container center">
+    <div class="eyebrow purple">DRESS CODE</div>
+    <div class="dresscode-icon">
+      <!-- Vestido SVG animado -->
+      <svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" width="80" height="100" class="dresscode-svg">
+        <path d="M30 10 Q40 5 50 10 L58 30 Q50 28 40 28 Q30 28 22 30 Z" fill="#c9a8e0" opacity="0.9"/>
+        <path d="M22 30 Q10 50 8 80 L40 75 L72 80 Q70 50 58 30 Q50 28 40 28 Q30 28 22 30Z" fill="#c9a8e0" opacity="0.7"/>
+        <ellipse cx="40" cy="10" rx="8" ry="6" fill="#e8d5f5"/>
+      </svg>
+    </div>
+    <h2 class="section-title">Código de vestimenta</h2>
+    <div class="dresscode-poem">
+      <p><strong>Ellos</strong> — traje formal deberán usar,</p>
+      <p><strong>Ellas</strong> — de vestido largo estarán...</p>
+      <p>Y juntos, puntualmente llegarán.</p>
+    </div>
+    <div class="dresscode-colors">
+      <div class="color-item">
+        <div class="color-swatch" style="background:#ffffff; border:2px solid #ddd;"></div>
+        <span class="color-label">Blanco</span>
+        <span class="color-sub">Solo para la novia 👰</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch" style="background:#d4b896;"></div>
+        <span class="color-label">Beige / Champagne</span>
+        <span class="color-sub">Para el novio 🤵</span>
+      </div>
+      <div class="color-item">
+        <div class="color-swatch" style="background:#9b6fc4;"></div>
+        <span class="color-label">Lila / Violeta</span>
+        <span class="color-sub">Damas de honor 💜</span>
+      </div>
+    </div>
+    <p class="dresscode-note">✨ Evita el blanco — es el color reservado para la novia.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     REGALO / DATOS BANCARIOS
+══════════════════════════════════════════ -->
+<section class="section-regalo" id="regalo">
+  <div class="container center">
+    <div class="eyebrow purple">REGALO</div>
+    <div class="regalo-icon">
+      <!-- Gift SVG animado -->
+      <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="80" height="80" class="gift-svg">
+        <rect x="10" y="35" width="60" height="38" rx="4" fill="#c9a8e0" opacity="0.8"/>
+        <rect x="8" y="26" width="64" height="14" rx="3" fill="#9b6fc4" opacity="0.9"/>
+        <line x1="40" y1="26" x2="40" y2="73" stroke="#f3eef8" stroke-width="3"/>
+        <path d="M40 26 C40 26 28 20 28 12 C28 7 32 5 36 7 C38 8 40 12 40 26Z" fill="#b87fd4" opacity="0.9"/>
+        <path d="M40 26 C40 26 52 20 52 12 C52 7 48 5 44 7 C42 8 40 12 40 26Z" fill="#b87fd4" opacity="0.9"/>
+        <circle cx="40" cy="26" r="4" fill="#f3eef8"/>
+      </svg>
+    </div>
+    <h2 class="section-title">¿Quieres hacernos un regalo?</h2>
+    <p class="story-text" style="margin-bottom:32px;">
+      Tu presencia es el mejor regalo. Si deseas contribuir a nuestra luna de miel
+      o nuevo hogar, puedes hacerlo a través de transferencia bancaria.
+      ¡Gracias desde el corazón! 💜
+    </p>
+    <button class="btn-banco" onclick="abrirBanco()">
+      🏦 Ver datos bancarios
+    </button>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MÁS INFO / WHATSAPP
+══════════════════════════════════════════ -->
+<section class="section-info" id="info">
+  <div class="container center">
+    <div class="eyebrow purple">MÁS INFO</div>
+    <h2 class="section-title">¿Dudas? Habla con los novios</h2>
+    <p class="story-text">Si tienes alguna pregunta, no dudes en escribirnos directamente.</p>
+    <div class="whatsapp-btns">
+      <a class="btn-whatsapp" href="https://wa.me/56912345678?text=Hola%20Kewin!%20Tengo%20una%20consulta%20sobre%20la%20boda%20💜" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Escribir a Kewin
+      </a>
+      <a class="btn-whatsapp" href="https://wa.me/56987654321?text=Hola%20Isi!%20Tengo%20una%20consulta%20sobre%20la%20boda%20💜" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Escribir a Isi
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-heart">
+    <svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+      <path d="M50 85 C50 85 5 55 5 28 C5 14 16 5 28 5 C37 5 45 10 50 18 C55 10 63 5 72 5 C84 5 95 14 95 28 C95 55 50 85 50 85Z" fill="#c9a8e0"/>
+    </svg>
+  </div>
+  <p class="footer-text">Te esperamos</p>
+  <p class="footer-names">K &amp; I</p>
+  <p class="footer-sub">Con amor, Kewin &amp; Isi · Marzo 2027</p>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     POPUP BANCO
+══════════════════════════════════════════ -->
+<div class="popup-backdrop" id="bancoBackdrop" onclick="cerrarBanco(event)">
+  <div class="popup-panel" id="bancoPanel">
+    <button class="popup-close" onclick="cerrarBanco()">✕</button>
+    <div class="popup-inner">
+      <div class="eyebrow purple" style="text-align:center;">DATOS BANCARIOS</div>
+      <h2 class="popup-title">💜 Transferencia</h2>
+      <div class="bank-card">
+        <div class="bank-row"><span class="bank-label">Titular</span><span class="bank-value" id="b-titular">Isidora Apellido</span></div>
+        <div class="bank-row"><span class="bank-label">RUT</span><span class="bank-value" id="b-rut">12.345.678-9</span></div>
+        <div class="bank-row"><span class="bank-label">Banco</span><span class="bank-value" id="b-banco">Banco Estado</span></div>
+        <div class="bank-row"><span class="bank-label">Tipo</span><span class="bank-value" id="b-tipo">Cuenta Vista</span></div>
+        <div class="bank-row"><span class="bank-label">N° Cuenta</span><span class="bank-value" id="b-cuenta">12345678999</span></div>
+        <div class="bank-row"><span class="bank-label">Email</span><span class="bank-value" id="b-email">correo@ejemplo.com</span></div>
+      </div>
+      <button class="btn-copy-all" onclick="copiarTodo()">📋 Copiar todos los datos</button>
+      <div id="copyToast" class="copy-toast">¡Datos copiados! ✓</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── POPUP RSVP ── -->
+<div class="rsvp-backdrop" id="rsvpBackdrop" onclick="cerrarRSVP(event)">
+  <div class="rsvp-panel" id="rsvpPanel">
+
+    <button class="rsvp-close" onclick="cerrarRSVP()">✕</button>
+
+    <div class="rsvp-inner">
+      <div class="eyebrow purple" style="text-align:center;">RSVP</div>
+      <h2 class="rsvp-title">💜 Confirma tu asistencia</h2>
+      <p class="rsvp-subtitle">
+        Nos encantaría tenerte con nosotros.<br>
+        Por favor confirma antes del <strong>01 de febrero de 2027</strong>.
+      </p>
+
+      <form id="rsvpForm" onsubmit="enviarRSVP(event)">
+
+        <div class="field-group">
+          <label for="nombre">Nombre completo</label>
+          <input type="text" id="nombre" placeholder="¿Cómo te llamas?" required>
+        </div>
+
+        <div class="field-group">
+          <label for="asistencia">¿Asistirás?</label>
+          <select id="asistencia" required>
+            <option value="">Selecciona una opción</option>
+            <option value="Sí">Sí, allí estaré 🎉</option>
+            <option value="No">No podré asistir 😢</option>
+          </select>
+        </div>
+
+         <div class="field-group">
+          <label for="alergias">🥗 ¿Restricciones de alimentos o alergias?</label>
+          <input type="text" id="alergias" placeholder="Ej: vegetariano, sin gluten, alergia a mariscos...">
+        </div>
+
+        <div class="field-group">
+          <label for="cancion">🎵 ¿Qué canción no puede faltar en la fiesta?</label>
+          <input type="text" id="cancion" placeholder="Artista - Nombre de la canción">
+        </div>
+
+        <div class="field-group">
+          <label for="mensaje">Mensaje para los novios</label>
+          <textarea id="mensaje" rows="3" placeholder="Escríbenos algo bonito (opcional)"></textarea>
+        </div>
+
+
+        <button class="btn-dark" type="submit" id="submitBtn">
+          Confirmar asistencia
+        </button>
+
+        <div id="formMsg" class="form-msg"></div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- <audio id="music" loop>
+  <source src="sjjm_S_132.mp3" type="audio/mpeg">
+</audio>-->
+
+<script src="script.js"></script>
+
+Show actions chain
+Aquí tienes el HTML y JS corregidos para que la canción funcione correctamente:
+
+En el HTML, reemplaza el bloque del reproductor por esto:
+
+<!-- REPRODUCTOR DE AUDIO OCULTO (YOUTUBE API) -->
+<div id="youtube-audio-player" style="display:none;"></div>
+
+<script>
+  // Carga la API de YouTube de forma correcta
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  var player;
+
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('youtube-audio-player', {
+      height: '1',
+      width: '1',
+      videoId: 'Ish32U_rWII',
+      playerVars: {
+        'autoplay'   : 0,
+        'loop'       : 1,
+        'playlist'   : 'Ish32U_rWII',
+        'controls'   : 0,
+        'disablekb'  : 1,
+        'fs'         : 0,
+        'modestbranding': 1,
+        'rel'        : 0
+      },
+      events: {
+        'onReady'      : onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerReady(event) {
+    console.log("🎵 Reproductor listo");
+    // Silenciar al inicio para evitar bloqueos del navegador
+    event.target.setVolume(0);
+  }
+
+  function onPlayerStateChange(event) {
+    // Si el video termina, volver a reproducir (loop manual más confiable)
+    if (event.data === YT.PlayerState.ENDED) {
+      player.seekTo(0);
+      player.playVideo();
+    }
+  }
+</script>
+</script>
+</body>
+</html>  
