@@ -589,23 +589,25 @@
 
 <!-- REPRODUCTOR DE AUDIO OCULTO (YOUTUBE API) -->
 <div id="youtube-audio-player" style="display:none;"></div>
-
+ 
 <script>
   // Carga la API de YouTube de forma correcta
   var tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+ 
   var player;
-
+ 
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('youtube-audio-player', {
       height: '1',
       width: '1',
       videoId: 'Ish32U_rWII',
       playerVars: {
-        'autoplay'   : 0,
+        'autoplay'   : 1,          // arranca solo, pero muteado (esto SÍ lo permiten los móviles)
+        'mute'       : 1,          // clave para que iOS/Android no bloqueen el autoplay
+        'playsinline': 1,          // evita que iOS intente abrir el video a pantalla completa
         'loop'       : 1,
         'playlist'   : 'Ish32U_rWII',
         'controls'   : 0,
@@ -620,13 +622,18 @@
       }
     });
   }
-
+ 
+  // Bandera global: nos dice si el player ya está listo para reaccionar al clic
+  window.__ytPlayerReady = false;
+ 
   function onPlayerReady(event) {
     console.log("🎵 Reproductor listo");
-    // Silenciar al inicio para evitar bloqueos del navegador
-    event.target.setVolume(0);
+    // Arranca muteado automáticamente en cuanto está listo (permitido en móvil)
+    event.target.mute();
+    event.target.playVideo();
+    window.__ytPlayerReady = true;
   }
-
+ 
   function onPlayerStateChange(event) {
     // Si el video termina, volver a reproducir (loop manual más confiable)
     if (event.data === YT.PlayerState.ENDED) {

@@ -193,15 +193,14 @@ function enterSite(playMusic) {
 }
 // ─── FUNCIÓN DE MÚSICA ───────────────────────────────────────
 function reproducirMusica() {
-  // Intentar reproducir si el player ya está listo
-  if (typeof player !== 'undefined' && player !== null) {
+  if (typeof player !== 'undefined' && player !== null && window.__ytPlayerReady) {
     try {
-      // Subir volumen gradualmente para evitar bloqueos
-      player.setVolume(0);
+      player.unMute();
       player.playVideo();
-
+ 
       // Subir volumen poco a poco
       let vol = 0;
+      player.setVolume(vol);
       const fadeIn = setInterval(() => {
         vol += 5;
         if (vol >= 50) {
@@ -210,16 +209,18 @@ function reproducirMusica() {
         }
         player.setVolume(vol);
       }, 150);
-
+ 
     } catch (err) {
       console.warn("No se pudo reproducir la música:", err);
     }
   } else {
-    // Si el player aún no está listo, reintentar cada 500ms
+    // El player todavía no está listo (típico en conexiones móviles lentas):
+    // guardamos la intención y la ejecutamos apenas esté listo.
+    window.__musicaPendiente = true;
     let intentos = 0;
     const esperar = setInterval(() => {
       intentos++;
-      if (typeof player !== 'undefined' && player !== null) {
+      if (typeof player !== 'undefined' && player !== null && window.__ytPlayerReady) {
         clearInterval(esperar);
         reproducirMusica();
       }
