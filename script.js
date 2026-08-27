@@ -192,12 +192,17 @@ function enterSite(playMusic) {
   
 }
 // ─── FUNCIÓN DE MÚSICA ───────────────────────────────────────
+// IMPORTANTE: esta función se llama directamente desde el onclick del botón
+// (mismo "gesto" del usuario). En móvil, desmutear un video que YA está
+// sonando (aunque en silencio) sí está permitido; pedirle a un video que
+// arranque desde cero fuera del clic original, NO lo está — por eso antes
+// fallaba solo en celular.
 function reproducirMusica() {
   if (typeof player !== 'undefined' && player !== null && window.__ytPlayerReady) {
     try {
       player.unMute();
       player.playVideo();
- 
+
       // Subir volumen poco a poco
       let vol = 0;
       player.setVolume(vol);
@@ -209,7 +214,7 @@ function reproducirMusica() {
         }
         player.setVolume(vol);
       }, 150);
- 
+
     } catch (err) {
       console.warn("No se pudo reproducir la música:", err);
     }
@@ -633,7 +638,7 @@ async function enviarRSVP(e) {
     });
 
     formMsg.textContent = "¡Gracias! Tu confirmación fue enviada con éxito 💜";
-    formMsg.style.color = "#9a84a8";
+    formMsg.style.color = "#a37fc0";
     document.getElementById("rsvpForm").reset();
 
     // Cerrar panel después de 2.5s
