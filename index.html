@@ -1,28 +1,23 @@
  <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="preload-lock">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kewin & Isi</title>
+
+  <!-- Tipografía unificada de toda la invitación:
+       · Alex Brush        → títulos caligráficos (nombres, "Te esperamos", frases románticas)
+       · Playfair Display  → números y fechas destacadas (countdown, día de la boda)
+       · Cormorant Garamond→ encabezados y textos elegantes en general
+       · Inter             → botones, menú, formularios y etiquetas pequeñas -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Satisfy&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Italianno&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
-  <!-- Color para navegadores moviles -->
-<meta name="theme-color" content="#FFFCF8">
-
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
-  rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Parisienne&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#FFFCF8">
 </head>
+
 
 <body class="preload">
 
@@ -134,7 +129,11 @@
       con nosotros...
     </p>
   </div>
-</section>
+
+      <div class="section-divider section-divider--flower">
+        <img src="Div_flower.svg" alt="" loading="lazy">
+      </div>
+    </section>
 
 <!-- FECHA + COUNTDOWN -->
 <section class="hero-countdown">
@@ -165,7 +164,11 @@
 
     <div class="countdown" id="countdown"></div>
   </div>
-</section>
+
+      <div class="section-divider section-divider--heart">
+        <img src="Div_Heart.svg" alt="" loading="lazy">
+      </div>
+    </section>
 
 <!-- NUESTRA HISTORIA -->
 <section class="section-historia" id="historia">
@@ -186,7 +189,11 @@
       </div>
     </div>
   </div>
-</section>
+
+      <div class="section-divider section-divider--flower">
+        <img src="Div_flower.svg" alt="" loading="lazy">
+      </div>
+    </section>
 
 <!-- DETALLES: CEREMONIA + RECEPCIÓN -->
 <section id="detalles">
@@ -276,7 +283,11 @@
 
     </div>
   </div>
-</section>
+
+      <div class="section-divider section-divider--heart">
+        <img src="Div_Heart.svg" alt="" loading="lazy">
+      </div>
+    </section>
 <!-- ══════════════════════════════════════════
      ITINERARIO
 ══════════════════════════════════════════ -->
@@ -399,7 +410,11 @@
  
     </div>
   </div>
-</section>
+
+      <div class="section-divider section-divider--flower">
+        <img src="Div_flower.svg" alt="" loading="lazy">
+      </div>
+    </section>
 <!-- ══════════════════════════════════════════
      GALERÍA CARRUSEL
 ══════════════════════════════════════════ -->
@@ -438,7 +453,11 @@
       <div class="carousel-dots" id="carouselDots"></div>
     </div>
   </div>
-</section>
+
+      <div class="section-divider section-divider--heart">
+        <img src="Div_Heart.svg" alt="" loading="lazy">
+      </div>
+    </section>
 
 <!-- ══════════════════════════════════════════
      DRESS CODE
@@ -463,11 +482,15 @@
     </div>
  
     <button class="btn-dresscode" onclick="abrirDresscode()">
-      🎨 Ver paleta de colores
+      Ver paleta de colores
     </button>
  
   </div>
-</section>
+
+      <div class="section-divider section-divider--flower">
+        <img src="Div_flower.svg" alt="" loading="lazy">
+      </div>
+    </section>
  
 <!-- ── POPUP DRESS CODE ── -->
 <div class="popup-backdrop" id="dresscodeBackdrop" onclick="cerrarDresscode(event)">
@@ -524,10 +547,14 @@
       ¡Gracias desde el corazón! 💜
     </p>
     <button class="btn-banco" onclick="abrirBanco()">
-      🏦 Ver datos bancarios
+      Ver datos bancarios
     </button>
   </div>
-</section>
+
+      <div class="section-divider section-divider--heart">
+        <img src="Div_Heart.svg" alt="" loading="lazy">
+      </div>
+    </section>
 
 <!-- ══════════════════════════════════════════
      MÁS INFO / WHATSAPP
@@ -602,7 +629,7 @@
       <form id="rsvpForm" onsubmit="enviarRSVP(event)">
 
         <div class="field-group">
-          <label for="nombre">Nombre completo</label>
+          <label for="nombre">Nombre</label>
           <input type="text" id="nombre" placeholder="¿Cómo te llamas?" required>
         </div>
 
@@ -610,18 +637,18 @@
           <label for="asistencia">¿Asistirás?</label>
           <select id="asistencia" required>
             <option value="">Selecciona una opción</option>
-            <option value="Sí">Sí, allí estaré 🎉</option>
-            <option value="No">No podré asistir 😢</option>
+            <option value="Sí">Sí, allí estaré</option>
+            <option value="No">No podré asistir</option>
           </select>
         </div>
 
          <div class="field-group">
-          <label for="alergias">🥗 ¿Restricciones de alimentos o alergias?</label>
+          <label for="alergias">¿Restricciones de alimentos o alergias?</label>
           <input type="text" id="alergias" placeholder="Ej: vegetariano, sin gluten, alergia a mariscos...">
         </div>
 
         <div class="field-group">
-          <label for="cancion">🎵 ¿Qué canción no puede faltar en la fiesta?</label>
+          <label for="cancion">¿Qué canción no puede faltar en la fiesta?</label>
           <input type="text" id="cancion" placeholder="Artista - Nombre de la canción">
         </div>
 
