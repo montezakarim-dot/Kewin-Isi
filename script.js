@@ -295,14 +295,14 @@ document.addEventListener("keydown", (e) => {
 
 });
 // ─── COUNTDOWN ───────────────────────────────────────────────
-const weddingDate = new Date('2027-03-06T17:30:00').getTime();
+const weddingDate = new Date('2027-03-06T15:00:00').getTime();
 
 function updateCountdown() {
   const diff      = weddingDate - Date.now();
   const countdown = document.getElementById('countdown');
 
   if (diff <= 0) {
-    countdown.innerHTML = `<div><span>🎉</span>¡Hoy es el gran día!</div>`;
+    countdown.innerHTML = `<div>¡Hoy es el gran día!</div>`;
     return;
   }
 

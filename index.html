@@ -139,48 +139,60 @@
 <!-- FECHA + COUNTDOWN -->
 <section class="hero-countdown">
   <div class="hero-countdown-inner">
+
     <p class="hero-esperamos">
       Te esperamos
     </p>
-    <p class="hero-fecha">
-      Marzo 06 · 2027
-    </p>
+
+    <div class="fecha-box">
+      <div class="fecha-col">
+        <span class="fecha-line"></span>
+        <span class="fecha-label">MARZO</span>
+        <span class="fecha-line"></span>
+      </div>
+      <div class="fecha-day">06</div>
+      <div class="fecha-col">
+        <span class="fecha-line"></span>
+        <span class="fecha-label">2027</span>
+        <span class="fecha-line"></span>
+      </div>
+    </div>
+
+    <h2 class="hero-frase-title">La fecha se acerca...</h2>
     <p class="hero-frase">
-      La fecha se acerca —
-      <em>
-        ¡Cada vez falta menos para celebrar todos juntos
-        este mágico día!
-      </em>
+      ¡Cada vez falta menos para celebrar todos juntos este día!
     </p>
+
     <div class="countdown" id="countdown"></div>
   </div>
 </section>
 
 <!-- NUESTRA HISTORIA -->
 <section class="section-historia" id="historia">
-  <div class="container center">
-    <div class="eyebrow purple">Cada historia de amor es hermosa, pero la nuestra es nuestra favorita.</div>
-    <div class="arch-photo-wrap">
-      <div class="arch-photo"></div>
+  <div class="container">
+    <div class="historia-tagline">Cada historia de amor es hermosa, pero la nuestra es nuestra favorita.</div>
+
+    <div class="historia-columns">
+      <div class="arch-photo-wrap">
+        <div class="arch-photo"></div>
+      </div>
+      <div class="historia-text">
+        <h2 class="section-title">De una conversación a una vida juntos...</h2>
+        <p class="story-text"><br>
+          Nuestra historia comenzó gracias a una inesperada conexión entre nuestras familias.<br>
+          Ella de Santiago y él de Concepción, dos ciudades separadas por kilómetros, pero unidas por algo mucho más importante: nuestra fe en Jehová.<br><br>
+          Lo que comenzó con una conversación se transformó en una hermosa historia de amor, amistad y compañerismo. Hoy, después de casi tres años juntos, estamos felices de dar el siguiente paso y comenzar una nueva etapa de nuestras vidas.
+        </p>
+      </div>
     </div>
-    <h2 class="section-title">De una conversación a una vida juntos...</h2>
-    <p class="story-text"><br>
-      Nuestra historia comenzó gracias a una inesperada conexión entre nuestras familias.<br>
-      Ella de Santiago y él de Concepción, dos ciudades separadas por kilómetros, pero unidas por algo mucho más importante: nuestra fe en Jehová.<br><br>
-      Lo que comenzó con una conversación se transformó en una hermosa historia de amor, amistad y compañerismo. Hoy, después de casi tres años juntos, estamos felices de dar el siguiente paso y comenzar una nueva etapa de nuestras vidas.
-    </p>
   </div>
 </section>
-
 
 <!-- DETALLES: CEREMONIA + RECEPCIÓN -->
 <section id="detalles">
   <div class="card center">
-    <div class="eyebrow purple">DETALLES</div>
-    <h2>Reserva la fecha</h2>
-
+    <h2 class="section-title">Reserva la fecha</h2>
     <div class="events-grid">
-
       <!-- CEREMONIA -->
       <div class="event-block">
         <div class="event-icon"><img src="ceremonia.svg" alt="Ceremonia"></div>
@@ -271,7 +283,7 @@
 <section class="section-itinerario" id="itinerario" style="--bg-itinerario: url('fondo-itinerario.jpg');">
   <div class="container center">
      <h2 class="section-title">Itinerario</h2>
-    <p class="itinerario-intro">Recuerda organizarte con tiempo para que no te pierdas ningún momento de esta ceremonia tan especial para nosotros.</p>
+    <p class="itinerario-intro">No te pierdas ningún momento de esta ceremonia tan especial para nosotros.</p>
  
     <div class="timeline">
  
@@ -393,7 +405,6 @@
 ══════════════════════════════════════════ -->
 <section class="section-galeria" id="galeria">
   <div class="container center">
-    <div class="eyebrow purple">GALERÍA</div>
     <h2 class="section-title">Nuestros momentos</h2>
     <div class="carousel-wrapper">
       <div class="carousel-track" id="carouselTrack">
@@ -484,7 +495,7 @@
       </div>
  
       <div class="dresscode-divider"></div>
-      <p class="dresscode-note">✨ Fuera de estos colores, el resto de la paleta es completamente libre. ¡Gracias por ayudarnos a mantener la armonía de nuestra celebración!</p>
+      <p class="dresscode-note">✨ Fuera de estos colores, el resto de la paleta es completamente libre.</p>
     </div>
   </div>
 </div>
@@ -495,8 +506,7 @@
 ══════════════════════════════════════════ -->
 <section class="section-regalo" id="regalo">
   <div class="container center">
-    <div class="eyebrow purple">REGALO</div>
-    <div class="regalo-icon">
+       <div class="regalo-icon">
       <!-- Gift SVG animado -->
       <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="80" height="80" class="gift-svg">
         <rect x="10" y="35" width="60" height="38" rx="4" fill="#c9a8e0" opacity="0.8"/>
@@ -524,7 +534,6 @@
 ══════════════════════════════════════════ -->
 <section class="section-info" id="info">
   <div class="container center">
-    <div class="eyebrow purple">MÁS INFO</div>
     <h2 class="section-title">¿Dudas? Habla con los novios</h2>
     <p class="story-text">Si tienes alguna pregunta, no dudes en escribirnos directamente.</p>
     <div class="whatsapp-btns">
@@ -581,9 +590,7 @@
 <!-- ── POPUP RSVP ── -->
 <div class="rsvp-backdrop" id="rsvpBackdrop" onclick="cerrarRSVP(event)">
   <div class="rsvp-panel" id="rsvpPanel">
-
     <button class="rsvp-close" onclick="cerrarRSVP()">✕</button>
-
     <div class="rsvp-inner">
       <div class="eyebrow purple" style="text-align:center;">RSVP</div>
       <h2 class="rsvp-title">💜 Confirma tu asistencia</h2>

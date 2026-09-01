@@ -502,7 +502,6 @@ section:not(.hero)::after { opacity: .25; }
 .overlay-card {
   position: relative;
   z-index: 2;
-
   text-align: center;
   padding: 20px;
 }
@@ -534,19 +533,15 @@ section:not(.hero)::after { opacity: .25; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 12px;
-
   width: 100%;
   max-width: 300px;
-
   margin: clamp(30px, 5vw, 42px) auto 0;
 }
 
 .overlay-card .buttons .btn {
   min-height: 48px;
   width: min(290px, 75vw);
-
   text-align: center;
 }
 
@@ -559,10 +554,10 @@ section:not(.hero)::after { opacity: .25; }
   min-height: 0 !important;
   height: auto !important;
   padding:
-    clamp(28px, 5vw, 55px)
+    clamp(40px, 6vw, 70px)
     clamp(15px, 4vw, 30px)
-    clamp(30px, 5vw, 55px);
-  background: linear-gradient(135deg, #f8effd 0%, #f0ddf7 100%);
+    clamp(50px, 7vw, 80px);
+  background: #f4ecfb;
   text-align: center;
   display: block;
   box-sizing: border-box;
@@ -574,68 +569,112 @@ section:not(.hero)::after { opacity: .25; }
   height: auto;
 }
 .hero-countdown .hero-esperamos {
-  margin: 0 0 clamp(4px, 1vw, 8px);
+  margin: 0 0 clamp(20px, 4vw, 32px);
   font-family: 'Parisienne', cursive;
-  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-size: clamp(2.3rem, 7vw, 3.6rem);
   line-height: 1.1;
-  color: #a83fd6;
+  color: #8a0ab3;
 }
-.hero-countdown .hero-fecha {
-  margin: 0 0 clamp(10px, 2vw, 18px);
+
+/* ── FECHA ESTILO "FEB. 19 2026" ── */
+.fecha-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 4vw, 34px);
+  margin: 0 auto clamp(38px, 7vw, 56px);
+}
+.fecha-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 10px);
+}
+.fecha-line {
+  width: clamp(40px, 7vw, 68px);
+  height: 1px;
+  background: #cdaee6;
+}
+.fecha-label {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.1rem, 3vw, 1.8rem);
-  line-height: 1.2;
-  letter-spacing: clamp(1px, .4vw, 2px);
-  color: #5a0877;
+  font-size: clamp(.85rem, 2vw, 1.05rem);
+  letter-spacing: .16em;
+  color: #8a0ab3;
+}
+.fecha-day {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: clamp(3.4rem, 11vw, 5.2rem);
+  line-height: 1;
+  color: #4a0763;
+}
+
+/* ── TÍTULO "LA FECHA SE ACERCA..." (mismo tamaño que .section-title) ── */
+.hero-frase-title {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto clamp(10px, 2vw, 16px);
+  text-align: center;
+  font-family: 'Alex Brush', cursive;
+  font-weight: 400;
+  font-size: clamp(2.6rem, 9vw, 4.4rem);
+  line-height: 0.95;
+  letter-spacing: 1px;
+  color: #8a0ab3;
 }
 .hero-countdown .hero-frase {
   width: min(100%, 650px);
-  margin-inline: auto;
-  font-size: clamp(.75rem, 2vw, .95rem);
+  margin: 0 auto clamp(30px, 6vw, 46px);
+  font-size: clamp(.85rem, 2.1vw, 1.02rem);
   line-height: 1.55;
-  color: #7c6a94;
+  color: #5d4960;
   text-wrap: pretty;
 }
-.hero-countdown .hero-frase em { color: #a83fd6; }
 
-/* COUNTDOWN */
+/* ── COUNTDOWN ESTILO ARCO ── */
 .countdown {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: stretch;
   flex-wrap: nowrap;
-  gap: clamp(5px, 2vw, 12px);
-  margin-top: clamp(18px, 4vw, 30px);
+  gap: clamp(8px, 3vw, 24px);
+  margin-top: 0;
 }
 .countdown div {
-  flex: 0 1 clamp(58px, 17vw, 95px);
+  flex: 0 1 clamp(70px, 19vw, 112px);
+  min-height: clamp(118px, 26vw, 168px);
   min-width: 0;
-  padding: clamp(9px, 2vw, 15px) clamp(6px, 2vw, 12px);
-  border-radius: clamp(10px, 3vw, 16px);
-  background: rgba(245,235,255,.55);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(100,60,140,.08);
+  border: 1.5px solid #4a0763;
+  border-radius: 999px 999px 6px 6px;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: clamp(14px, 4vw, 22px);
+  box-sizing: border-box;
   text-align: center;
 }
 .countdown span {
   display: block;
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.15rem, 5vw, 1.7rem);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
   line-height: 1;
-  color: #5a0877;
+  color: #d3a8cc;
   font-variant-numeric: tabular-nums;
 }
 .countdown small {
   display: block;
-  margin-top: 5px;
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(.52rem, 1.8vw, .68rem);
+  margin-top: clamp(4px, 1.2vw, 8px);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(.7rem, 2vw, .92rem);
   line-height: 1.1;
-  letter-spacing: clamp(.5px, .2vw, 1px);
-  text-transform: uppercase;
-  color: #917aa8;
+  letter-spacing: .02em;
+  text-transform: none;
+  color: #3d2a4a;
 }
 
 /* ── FONDOS ── */
@@ -663,12 +702,39 @@ section:not(.hero)::after { opacity: .25; }
 ══════════════════════════════════════════ */
 .section-historia {
   background: #f8effd;
-  padding: 80px 24px;
+  padding: 70px 24px 80px;
 }
+/* Flor decorativa propia de esta sección: arriba a la derecha
+   (sobreescribe la posición genérica "right bottom" del resto de secciones) */
+.section-historia::after {
+  background-image: url('flower_right.png');
+  background-position: right top;
+  top: 0;
+}
+.historia-tagline {
+  max-width: 640px;
+  margin: 0 auto clamp(28px, 5vw, 46px);
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  line-height: 1.6;
+  color: #a583c2;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.historia-columns {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  position: relative;
+  z-index: 2;
+}
+.historia-text { text-align: center; width: 100%; }
 .arch-photo-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
 }
 .arch-photo {
   width: 220px;
@@ -686,6 +752,20 @@ section:not(.hero)::after { opacity: .25; }
   border-radius: 116px 116px 0 0;
   border: 1px solid rgba(201,168,224,0.4);
 }
+
+/* ── Desktop / tablet apaisada: foto a la izquierda, texto a la derecha ── */
+@media (min-width: 820px) {
+  .historia-columns {
+    flex-direction: row;
+    align-items: center;
+    gap: 60px;
+  }
+  .arch-photo-wrap { flex: 0 0 300px; }
+  .historia-text { flex: 1; text-align: left; }
+  .historia-text .section-title { text-align: left; margin-left: 0; }
+  .historia-text .story-text { text-align: left; margin-left: 0; }
+}
+
 
 /* ══════════════════════════════════════════
    DETALLES: EVENTOS GRID
@@ -1997,10 +2077,10 @@ section > .card {
   .hero .lead { max-width: 330px; font-size: .9rem; line-height: 1.6; }
   .hero-countdown { padding: 35px 15px 45px; }
   .hero-countdown .hero-frase { max-width: 330px; font-size: .82rem; }
-  .countdown { gap: 7px; margin-top: 22px; }
-  .countdown div { min-width: 62px; padding: 10px 7px; border-radius: 12px; }
-  .countdown span { font-size: 1.35rem; }
-  .countdown small { font-size: .58rem; }
+  .countdown { gap: 7px; margin-top: 4px; }
+  .countdown div { min-width: 0; }
+  .countdown span { font-size: 1.5rem; }
+  .countdown small { font-size: .68rem; }
   .events-grid { grid-template-columns: 1fr; }
   .timeline { padding-left: 0; }
   .timeline::before { left: 27px; }
