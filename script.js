@@ -172,6 +172,7 @@ function enterSite(playMusic) {
   // Animar el hero
   setTimeout(() => {
     document.body.classList.remove("preload");
+    document.documentElement.classList.remove("preload-lock");
     hero.classList.add("hero-visible");
   }, 300);
 // Ir al inicio DESPUÉS de que el overlay empiece a desaparecer
@@ -311,10 +312,10 @@ function updateCountdown() {
   const seconds = Math.floor((diff / 1000) % 60);
 
   countdown.innerHTML = `
-    <div><span>${days}</span>días</div>
-    <div><span>${hours}</span>horas</div>
-    <div><span>${minutes}</span>min</div>
-    <div><span>${seconds}</span>seg</div>
+    <div><span>${days}</span><small>Días</small></div>
+    <div><span>${hours}</span><small>Horas</small></div>
+    <div><span>${minutes}</span><small>Minutos</small></div>
+    <div><span>${seconds}</span><small>Segundos</small></div>
   `;
 }
 setInterval(updateCountdown, 1000);
@@ -557,9 +558,20 @@ function cerrarBanco(e) {
 }
 
 // ─── POPUP RSVP ──────────────────────────────────────────────
+let rsvpScrollY = 0;
+
 function abrirRSVP() {
   const backdrop = document.getElementById("rsvpBackdrop");
+  // Guardamos la posición de scroll y "congelamos" el body.
+  // En iOS, overflow:hidden por sí solo NO evita que la página de
+  // fondo siga scrolleando con el dedo: por eso antes, al bajar
+  // dentro del popup, a veces el gesto se lo "robaba" el fondo y
+  // parecía que ya no se podía volver a subir.
+  rsvpScrollY = window.scrollY || window.pageYOffset || 0;
   backdrop.classList.add("open");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${rsvpScrollY}px`;
+  document.body.style.width = "100%";
   document.body.style.overflow = "hidden";
 }
 
@@ -568,12 +580,43 @@ function cerrarRSVP(e) {
   if (e && e.target !== document.getElementById("rsvpBackdrop")) return;
   const backdrop = document.getElementById("rsvpBackdrop");
   backdrop.classList.remove("open");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  document.body.style.overflow = "";
+  window.scrollTo(0, rsvpScrollY);
+}
+
+// Si el campo enfocado queda tapado por el teclado del celular,
+// lo llevamos al centro del panel apenas el teclado termina de abrir.
+document.addEventListener("focusin", (e) => {
+  const panel = document.getElementById("rsvpPanel");
+  if (panel && panel.contains(e.target)) {
+    setTimeout(() => {
+      e.target.scrollIntoView({ block: "center", behavior: "smooth" });
+    }, 300);
+  }
+});
+
+// ─── POPUP DRESS CODE ───────────────────────────────────────
+function abrirDresscode() {
+  const backdrop = document.getElementById("dresscodeBackdrop");
+  backdrop.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function cerrarDresscode(e) {
+  if (e && e.target !== document.getElementById("dresscodeBackdrop")) return;
+  document.getElementById("dresscodeBackdrop").classList.remove("open");
   document.body.style.overflow = "";
 }
 
 // Cerrar con tecla Escape
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") cerrarRSVP();
+  if (e.key === "Escape") {
+    cerrarRSVP();
+    cerrarDresscode();
+  }
 });
 
 // ─── COPIAR DATOS BANCARIOS ───────────────────────────────────
