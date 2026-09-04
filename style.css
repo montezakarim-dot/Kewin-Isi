@@ -252,13 +252,14 @@ section {
 
 /* ══════════════════════════════════════════
    HERO PRINCIPAL
+   — Flores superpuestas en esquinas (sin ::before/::after genérico)
 ══════════════════════════════════════════ */
 .hero {
   position: relative;
   width: 100%;
-  min-height: min(68svh, 720px);
+  min-height: calc(min(68svh, 720px) - 68px);
   padding:
-    clamp(45px, 7vw, 80px)
+    clamp(45px, 7vw, 90px)
     clamp(16px, 5vw, 60px);
   background:
     linear-gradient(
@@ -276,9 +277,44 @@ section {
   box-sizing: border-box;
   transition: opacity 2.8s ease, transform 3.2s ease, filter 2.5s ease;
 }
+
+/* Flower_left.png — esquina inferior izquierda del hero */
+.hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 70vw;
+  height: 70vw;
+  background-image: url('Flower_left.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* Flower_Rigth.png — esquina superior derecha del hero */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70vw;
+  height: 70vw;
+  background-image: url('Flower_Rigth.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top right;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+ }
+
+
 .hero-main {
-  width: 100%;
-  max-width: 700px;
+  width: min(100%, 900px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -286,14 +322,20 @@ section {
   justify-content: center;
 }
 .eyebrow{
+  margin-bottom: clamp(24px, 3.5vw, 42px);
   font-size: 20px;
-    line-height: 0.9;
-    letter-spacing: 1px;
-    font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
+.hero .title-xl {
+  margin: 0;
+  line-height: 0.95;
+}
+
 .hero .lead {
   width: min(100%, 560px);
-  margin: 0 auto;
+  margin: clamp(30px, 4vw, 48px) auto 0;
   padding-inline: 8px;
   font-size: clamp(.88rem, 2.2vw, 1.08rem);
   line-height: 1.65;
@@ -320,10 +362,16 @@ body.preload .hero {
   transform: translateY(0);
 }
 
-/* ── FLORES ── */
-.hero::before, .hero::after,
-section:not(.hero)::before,
-section:not(.hero)::after {
+/* ══════════════════════════════════════════
+   FLORES GENÉRICAS PARA SECCIONES
+   (se aplica a todas excepto hero, itinerario,
+    hero-countdown y dresscode que tienen reglas propias)
+══════════════════════════════════════════ */
+
+/* Por defecto: todas las secciones que no sean hero ni itinerario
+   usan Flor left / Flor Rigth con opacidad reducida */
+section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dresscode)::before,
+section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dresscode)::after {
   content: '';
   position: absolute;
   top: 0;
@@ -333,24 +381,142 @@ section:not(.hero)::after {
   z-index: 1;
   background-repeat: no-repeat;
   background-size: cover;
+  opacity: .10;
 }
-.hero::before,
-section:not(.hero)::before {
+section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dresscode)::before {
   left: 0;
   background-image: url('Flor left.png');
   background-position: left top;
   animation: floatLeft 8s ease-in-out infinite;
 }
-.hero::after,
-section:not(.hero)::after {
+section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dresscode)::after {
   right: 0;
   background-image: url('Flor Rigth.png');
   background-position: right bottom;
   animation: floatRight 8s ease-in-out infinite;
 }
-.hero::before, .hero::after { opacity: .45; }
-section:not(.hero)::before,
-section:not(.hero)::after { opacity: .25; }
+
+/* ══════════════════════════════════════════
+   HERO-COUNTDOWN — Flor left / Flor Rigth SIN transparencia
+══════════════════════════════════════════ */
+.hero-countdown {
+  position: relative;
+  overflow: hidden;
+}
+.hero-countdown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50vw;
+  height: 75%;
+  background-image: url('Flor left.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left top;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+.hero-countdown::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 75%;
+  background-image: url('Flor Rigth.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right bottom;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════
+   DRESS CODE — Flor left / Flor Rigth SIN transparencia
+══════════════════════════════════════════ */
+.section-dresscode {
+  position: relative;
+  overflow: hidden;
+}
+.section-dresscode::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50vw;
+  height: 100%;
+  background-image: url('Flor left.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left top;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+.section-dresscode::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 100%;
+  background-image: url('Flor Rigth.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right bottom;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════
+   ITINERARIO — Flower_left esquina inf-izq /
+                Flower_Rigth esquina sup-der (superpuestos)
+══════════════════════════════════════════ */
+/* Flower_left.png — esquina inferior izquierda del itinerario */
+.section-itinerario::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50vw;
+  height: 50vw;
+  background-image: url('Flower_left.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* Flower_Rigth.png — esquina superior derecha del itinerario */
+.section-itinerario::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50vw;
+  height: 50vw;
+  background-image: url('Flower_Rigth.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top right;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════
+   HISTORIA 
+   ══════════════════════════════════════════ */
+.section-historia {
+  background: #f8effd;
+  padding: 70px 24px 80px;
+}
 
 .inner {
   position: relative;
@@ -456,50 +622,35 @@ section:not(.hero)::after { opacity: .25; }
 /* ══════════════════════════════════════════
    OVERLAY
 ══════════════════════════════════════════ */
-
 .overlay {
   position: fixed;
   inset: 0;
-
   background-image: url('Overlay-vertical.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   z-index: 999;
-
   transition: opacity 3s ease, visibility 3s ease;
-
   overflow: hidden;
   text-align: center;
 }
 
-/* ══════════════════════════════════════════
-   TABLET Y PC
-══════════════════════════════════════════ */
 @media (min-width: 768px) {
   .overlay {
     background-image: url('Overlay-horizontal.png');
     background-size: cover;
     background-position: center center;
-     }
+  }
 }
-/* ══════════════════════════════════════════
-   OVERLAY OCULTO
-═════════════════════════════════════════ */
+
 .overlay.hidden {
   opacity: 0;
   visibility: hidden;
   transform: scale(1.05);
 }
-
-/* ══════════════════════════════════════════
-   CONTENIDO
-══════════════════════════════════════════ */
 
 .overlay-card {
   position: relative;
@@ -507,14 +658,12 @@ section:not(.hero)::after { opacity: .25; }
   text-align: center;
   padding: 20px;
 }
-
 .overlay-card .eyebrow {
   opacity: 0;
   transform: translateY(30px);
   animation: fadeUp 1.2s ease forwards;
   margin-bottom: 0;
 }
-
 .overlay-card .title-xl {
   opacity: 0;
   transform: translateY(50px) scale(.96);
@@ -522,14 +671,12 @@ section:not(.hero)::after { opacity: .25; }
   animation-delay: .4s;
   margin-bottom: 0;
 }
-
 .overlay-card .lead {
   opacity: 0;
   transform: translateY(30px);
   animation: fadeUp 1.2s ease forwards;
   animation-delay: 1s;
 }
-
 .overlay-card .buttons {
   display: flex;
   flex-direction: column;
@@ -540,7 +687,6 @@ section:not(.hero)::after { opacity: .25; }
   max-width: 300px;
   margin: clamp(30px, 5vw, 42px) auto 0;
 }
-
 .overlay-card .buttons .btn {
   min-height: 48px;
   width: min(290px, 75vw);
@@ -551,7 +697,6 @@ section:not(.hero)::after { opacity: .25; }
    FECHA + COUNTDOWN
 ══════════════════════════════════════════ */
 .hero-countdown {
-  position: relative;
   width: 100%;
   min-height: 0 !important;
   height: auto !important;
@@ -578,7 +723,6 @@ section:not(.hero)::after { opacity: .25; }
   color: #8a0ab3;
 }
 
-/* ── FECHA ESTILO "FEB. 19 2026" ── */
 .fecha-box {
   display: flex;
   align-items: center;
@@ -612,7 +756,6 @@ section:not(.hero)::after { opacity: .25; }
   color: #4a0763;
 }
 
-/* ── TÍTULO "LA FECHA SE ACERCA..." (mismo tamaño que .section-title) ── */
 .hero-frase-title {
   width: 100%;
   max-width: 900px;
@@ -634,7 +777,6 @@ section:not(.hero)::after { opacity: .25; }
   text-wrap: pretty;
 }
 
-/* ── COUNTDOWN ESTILO ARCO ── */
 .countdown {
   width: 100%;
   display: flex;
@@ -704,19 +846,8 @@ section:not(.hero)::after { opacity: .25; }
 .story { max-width: 720px; margin: auto; line-height: 2; }
 
 /* ══════════════════════════════════════════
-   NUESTRA HISTORIA
+   NUESTRA HISTORIA — sin cambios
 ══════════════════════════════════════════ */
-.section-historia {
-  background: #f8effd;
-  padding: 70px 24px 80px;
-}
-/* Flor decorativa propia de esta sección: arriba a la derecha
-   (sobreescribe la posición genérica "right bottom" del resto de secciones) */
-.section-historia::after {
-  background-image: url('flower_right.png');
-  background-position: right top;
-  top: 0;
-}
 .historia-tagline {
   max-width: 640px;
   margin: 0 auto clamp(28px, 5vw, 46px);
@@ -759,7 +890,6 @@ section:not(.hero)::after { opacity: .25; }
   border: 1px solid rgba(201,168,224,0.4);
 }
 
-/* ── Desktop / tablet apaisada: foto a la izquierda, texto a la derecha ── */
 @media (min-width: 820px) {
   .historia-columns {
     flex-direction: row;
@@ -771,7 +901,6 @@ section:not(.hero)::after { opacity: .25; }
   .historia-text .section-title { text-align: left; margin-left: 0; }
   .historia-text .story-text { text-align: left; margin-left: 0; }
 }
-
 
 /* ══════════════════════════════════════════
    DETALLES: EVENTOS GRID
@@ -806,7 +935,7 @@ section:not(.hero)::after { opacity: .25; }
   box-shadow: 0 10px 32px rgba(154,132,168,.16);
   transform: translateY(-3px);
 }
-.event-icon {   
+.event-icon {
   width: clamp(70px, 12vw, 100px);
   height: clamp(70px, 12vw, 100px);
   display: flex;
@@ -815,7 +944,6 @@ section:not(.hero)::after { opacity: .25; }
   margin-bottom: 4px;
   flex-shrink: 0;
 }
-
 .event-icon img {
   width: 100%;
   height: 100%;
@@ -857,7 +985,6 @@ section:not(.hero)::after { opacity: .25; }
   justify-content: center;
 }
 
-/* ── BOTÓN MAPA ── */
 .btn-map {
   display: inline-flex;
   align-items: center;
@@ -877,11 +1004,10 @@ section:not(.hero)::after { opacity: .25; }
 .btn-map:hover {
   transform: translateY(-2px);
   background: #6b0a8c;
-   color: #f9f8f9;
+  color: #f9f8f9;
   box-shadow: 0 8px 20px rgba(189, 154, 211, 0.32);
 }
 
-/* ── BOTÓN AGENDAR ── */
 .btn-agenda {
   display: inline-flex;
   align-items: center;
@@ -900,11 +1026,10 @@ section:not(.hero)::after { opacity: .25; }
 .btn-agenda:hover {
   transform: translateY(-2px);
   background: #6b0a8c;
-   color: #f9f8f9;
+  color: #f9f8f9;
   border-color: #a37fc0;
 }
 
-/* ── BOTÓN CONFIRMAR ── */
 .btn-confirm {
   display: inline-flex;
   align-items: center;
@@ -923,7 +1048,7 @@ section:not(.hero)::after { opacity: .25; }
 .btn-confirm:hover {
   transform: translateY(-2px);
   background: #6b0a8c;
-   color: #f9f8f9;
+  color: #f9f8f9;
   border-color: #a37fc0;
 }
 
@@ -933,13 +1058,11 @@ section:not(.hero)::after { opacity: .25; }
 .section-itinerario {
   position: relative;
   overflow: hidden;
-  background: #fff;
+  background: #f8effd;
   padding: 80px 24px;
 }
-/* Foto de fondo MUY transparente. Para cambiarla más adelante, edita
-   el atributo style="--bg-itinerario:url('...')" del <section> en el HTML
-   (una sola línea, no hace falta tocar este CSS). */
-.section-itinerario::before {
+/* Foto de fondo muy transparente */
+.section-itinerario > .inner-bg {
   content: '';
   position: absolute;
   inset: 0;
@@ -962,9 +1085,7 @@ section:not(.hero)::after { opacity: .25; }
   line-height: 1.7;
   font-style: italic;
 }
- 
-/* ── TIMELINE: por defecto (celular) VERTICAL ──
-   texto a la izquierda / corazón en la línea / ícono a la derecha */
+
 .timeline {
   display: grid;
   grid-template-columns: 1fr 28px 66px;
@@ -973,7 +1094,7 @@ section:not(.hero)::after { opacity: .25; }
   margin: 0 auto;
 }
 .timeline-item { display: contents; }
- 
+
 .timeline-content {
   grid-column: 1;
   align-self: center;
@@ -1023,7 +1144,7 @@ section:not(.hero)::after { opacity: .25; }
   filter: drop-shadow(0 4px 10px rgba(90,20,120,.18));
 }
 .timeline-item:hover .timeline-icon { transform: scale(1.08); }
- 
+
 .timeline-time {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.3rem;
@@ -1040,9 +1161,7 @@ section:not(.hero)::after { opacity: .25; }
   color: #a583c2;
   font-style: italic;
 }
- 
-/* ── TIMELINE HORIZONTAL: tablet apaisada y laptop/desktop ──
-   ícono arriba / corazón sobre la línea / hora y etiqueta abajo */
+
 @media (min-width: 820px) {
   .timeline {
     display: flex;
@@ -1061,7 +1180,7 @@ section:not(.hero)::after { opacity: .25; }
   .timeline-icon  { grid-area: icon;  width: 64px; height: 64px; }
   .timeline-marker{ grid-area: marker; width: 100%; height: 26px; }
   .timeline-content{ grid-area: content; text-align: center; padding: 0; margin-top: 4px; }
- 
+
   .timeline-marker::before {
     top: 50%;
     bottom: auto;
@@ -1073,48 +1192,39 @@ section:not(.hero)::after { opacity: .25; }
     background: linear-gradient(to right, #cdaee6, #a20ad4, #cdaee6);
   }
 }
+
 /* ══════════════════════════════════════════
    GALERÍA — CARRUSEL
-   REGLA BASE: DESKTOP (3 fotos visibles)
 ══════════════════════════════════════════ */
 .section-galeria {
   width: 100%;
   overflow: hidden;
   padding: clamp(55px, 7vw, 90px) 0;
-  background: #f6eee1;
+  background: #f4ecfb;
 }
 .section-galeria .container {
   width: min(94%, 1200px);
   margin: 0 auto;
 }
 
-/* CONTENEDOR PRINCIPAL */
 .carousel-wrapper {
   position: relative;
   width: 100%;
   margin: clamp(35px, 5vw, 55px) auto 0;
   overflow: hidden;
   border-radius: 12px;
-  /* DESKTOP: altura fija */
   height: clamp(320px, 38vw, 480px);
 }
 
-/* PISTA — nunca cambia */
 .carousel-track {
   display: flex;
   height: 100%;
   transition: transform 0.7s ease-in-out;
   will-change: transform;
-  /* Ancho total = 100% del wrapper,
-     el JS calcula el desplazamiento */
   width: 100%;
 }
 
-/* ─────────────────────────────────────────
-   SLIDE BASE — DESKTOP: 3 fotos por vista
-───────────────────────────────────────── */
 .carousel-slide {
-  /* 1/3 del ancho del wrapper */
   flex: 0 0 33.333333%;
   width: 33.333333%;
   height: 100%;
@@ -1123,7 +1233,6 @@ section:not(.hero)::after { opacity: .25; }
   padding: 0 4px;
 }
 
-/* IMAGEN dentro del slide */
 .carousel-slide img {
   width: 100%;
   height: 100%;
@@ -1133,9 +1242,6 @@ section:not(.hero)::after { opacity: .25; }
   border-radius: 8px;
 }
 
-/* ─────────────────────────────────────────
-   BOTONES PREV / NEXT
-───────────────────────────────────────── */
 .carousel-btn {
   position: absolute;
   top: 50%;
@@ -1166,9 +1272,6 @@ section:not(.hero)::after { opacity: .25; }
 .carousel-btn.prev { left: clamp(10px, 2vw, 18px); }
 .carousel-btn.next { right: clamp(10px, 2vw, 18px); }
 
-/* ─────────────────────────────────────────
-   PUNTOS INDICADORES
-───────────────────────────────────────── */
 .carousel-dots {
   position: absolute;
   left: 50%;
@@ -1198,6 +1301,7 @@ section:not(.hero)::after { opacity: .25; }
   background: #a83fd6;
   transform: scale(1.3);
 }
+
 /* ══════════════════════════════════════════
    DRESS CODE
 ══════════════════════════════════════════ */
@@ -1236,8 +1340,7 @@ section:not(.hero)::after { opacity: .25; }
   position: relative;
 }
 .dresscode-poem strong { color: #5a0877; font-style: normal; }
- 
-/* Botón elegante que abre el popup de la paleta */
+
 .btn-dresscode {
   display: inline-flex;
   align-items: center;
@@ -1259,8 +1362,7 @@ section:not(.hero)::after { opacity: .25; }
   box-shadow: 0 8px 24px rgba(162,10,212,.28);
   transform: translateY(-2px);
 }
- 
-/* Paleta dentro del popup */
+
 .dresscode-colors {
   display: flex;
   gap: 24px;
@@ -1292,8 +1394,7 @@ section:not(.hero)::after { opacity: .25; }
   color: #a583c2;
   text-align: center;
 }
- 
-/* Separador entre "colores sugeridos" y "colores a evitar" */
+
 .dresscode-divider {
   width: 70px;
   height: 1.5px;
@@ -1310,8 +1411,7 @@ section:not(.hero)::after { opacity: .25; }
   margin-bottom: 16px;
 }
 .dresscode-colors--avoid { margin-bottom: 22px; }
- 
-/* Círculo con línea diagonal roja = "no usar" */
+
 .color-item.avoid .color-swatch {
   position: relative;
   opacity: .9;
@@ -1324,7 +1424,7 @@ section:not(.hero)::after { opacity: .25; }
   background: linear-gradient(135deg, transparent 46.5%, #c0392b 48%, #c0392b 52%, transparent 53.5%);
 }
 .color-item.avoid .color-label { color: #8a7690; }
- 
+
 .dresscode-note {
   font-size: 0.85rem;
   color: #6b0a8c;
@@ -1387,39 +1487,47 @@ section:not(.hero)::after { opacity: .25; }
 }
 
 /* ══════════════════════════════════════════
-   DIVISORES DECORATIVOS ENTRE SECCIONES
-   (flor / corazón alternados, sin fondo)
+   DIVISORES DECORATIVOS
 ══════════════════════════════════════════ */
-.section-divider {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: clamp(34px, 6vw, 58px);
+section {
   position: relative;
-  z-index: 3;
+  overflow: visible !important;
+}
+.section-divider {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(50%);
+  z-index: 999;
   pointer-events: none;
 }
 .section-divider img {
-  width: min(52vw, 230px);
-  height: auto;
   display: block;
-  opacity: .92;
-  filter: drop-shadow(0 2px 10px rgba(90,10,120,.14));
+  width: min(190px, 20vw);
+  max-width: none;
+  height: auto;
+  opacity: .94;
+  filter: drop-shadow(0 2px 8px rgba(90,10,120,.12));
 }
-/* La flor es una acuarela: se satura y se inclina un poco más
-   hacia el lila fuerte para que combine con el resto de la paleta */
 .section-divider--flower img {
   filter: drop-shadow(0 2px 10px rgba(90,10,120,.14))
           saturate(1.45) hue-rotate(-6deg) brightness(.97);
 }
-/* Sobre el fondo morado oscuro del regalo, el corazón necesita
-   más contraste/opacidad para no perderse */
 .section-regalo .section-divider img {
   opacity: 1;
   filter: drop-shadow(0 2px 14px rgba(0,0,0,.35))
           brightness(1.6) saturate(1.2);
 }
+section:has(.section-divider) {
+  z-index: 2;
+}
+
 .whatsapp-btns {
   display: flex;
   gap: 16px;
@@ -1766,7 +1874,6 @@ section:not(.hero)::after { opacity: .25; }
 .menu-toggle.active span:nth-child(2) { opacity: 0; }
 .menu-toggle.active span:nth-child(3) { transform: translateY(-10px) rotate(-45deg); }
 
-/* PANEL DEL MENÚ */
 .menu-panel {
   position: fixed;
   top: 0;
@@ -1919,14 +2026,6 @@ section > .card {
 
 /* ══════════════════════════════════════════
    MEDIA QUERIES
-   ORDEN IMPORTANTE:
-   1. Desktop grande  (min 1025px)
-   2. Tablet          (768px – 1024px)
-   3. Tablet pequeña  (max 992px)
-   4. Móvil           (max 768px)
-   5. Móvil pequeño   (max 600px)
-   6. Móvil muy peq.  (max 480px)
-   7. Celular mínimo  (max 400px / 380px)
 ══════════════════════════════════════════ */
 
 /* ── 1. DESKTOP GRANDE ── */
@@ -1939,30 +2038,22 @@ section > .card {
     padding-left: 20px;
     padding-right: 20px;
   }
-  /* 3 fotos en desktop */
   .carousel-slide {
     flex: 0 0 33.333333% !important;
     width: 33.333333% !important;
   }
-   /* Contenedor completo del contenido */
   .overlay-card {
     transform: translateY(-2vh);
     padding: 15px;
   }
-
-  /* Texto pequeño superior */
   .overlay-card .eyebrow {
     font-size: 1.1rem;
     margin-bottom: 5px;
   }
-
-  /* Kewin & Isi */
   .overlay-card .title-xl {
     font-size: clamp(3.8rem, 5vw, 5.2rem);
     line-height: .9;
   }
-
-  /* Texto debajo de los nombres */
   .overlay-card .lead {
     font-size: .9rem;
     line-height: 1.4;
@@ -1970,21 +2061,18 @@ section > .card {
     margin-left: auto;
     margin-right: auto;
   }
-
-  /* Contenedor de botones */
   .overlay-card .buttons {
     max-width: 240px;
     gap: 10px;
     margin-top: 25px;
   }
-
-  /* Botón */
   .overlay-card .buttons .btn {
     width: 230px;
     min-height: 42px;
     padding: 11px 24px;
     font-size: .82rem;
   }
+  
 }
 
 /* ── 2. TABLET ── */
@@ -1998,7 +2086,6 @@ section > .card {
     padding-right: 20px;
   }
   .carousel-wrapper { height: clamp(280px, 45vw, 420px); }
-  /* 3 fotos en tablet horizontal */
   .carousel-slide {
     flex: 0 0 33.333333% !important;
     width: 33.333333% !important;
@@ -2010,14 +2097,6 @@ section > .card {
   .card { padding: 40px 30px; }
   .eyebrow_overlay { font-size: 1.3rem; letter-spacing: .18em; }
   .events-grid { grid-template-columns: 1fr; }
-  .overlay::before,.overlay::after { width: 35vw; opacity: .15; }
-  .overlay::before { left: -6vw; }
-  .overlay::after  { right: -6vw; }
-  .hero::before,.hero::after,
-  section:not(.hero)::before,
-  section:not(.hero)::after { width: 34vw; opacity: .20; }
-  .hero::before,section:not(.hero)::before { left: -6vw; }
-  .hero::after,section:not(.hero)::after   { right: -6vw; }
   .rsvp-backdrop { align-items: center; justify-content: center; }
   .rsvp-panel {
     width: min(520px,92vw);
@@ -2029,6 +2108,7 @@ section > .card {
     transform: translateY(40px) scale(.97);
   }
   .rsvp-backdrop.open .rsvp-panel { transform: translateY(0) scale(1); }
+
 }
 
 /* ── 4. MÓVIL (max 768px) ── */
@@ -2039,7 +2119,7 @@ section > .card {
   .menu-links { margin-top: 25px; }
   .menu-links a { padding: 15px 2px; font-size: .95rem; }
   .eyebrow_overlay { font-size: 1.1rem; letter-spacing: .18em; }
-  .lead { font-size: .95rem; line-height: 1.7; }
+  .lead { font-size: 1.02rem; line-height: 1.7; }
   .card { padding: 32px 22px; border-radius: 24px; }
   .events-grid { grid-template-columns: 1fr; gap: 20px; }
   .countdown { gap: 10px; }
@@ -2064,10 +2144,6 @@ section > .card {
     width: min(290px, 75vw);
     text-align: center;
   }
-  .overlay::before,.overlay::after { width: 100%; opacity: .10; }
-  .hero::before,.hero::after,
-  section:not(.hero)::before,
-  section:not(.hero)::after { width: 140px; opacity: .15; }
   .rsvp-backdrop { align-items: flex-end; justify-content: center; }
   .rsvp-panel {
     width: 100%;
@@ -2081,10 +2157,21 @@ section > .card {
   .rsvp-backdrop.open .rsvp-panel { transform: translateY(0); }
   .rsvp-inner { padding: 36px 24px 40px; }
 
-  /* ─────────────────────────────────────
-     CARRUSEL MÓVIL — 1 FOTO POR VEZ
-     Esta regla sobreescribe el base
-  ───────────────────────────────────── */
+  /* Flores hero e itinerario en móvil */
+  .hero::before,
+  .hero::after,
+  .section-itinerario::before,
+  .section-itinerario::after {
+    width: 100vw;
+    height: 100vw;
+  }
+  /* Flores countdown y dresscode en móvil */
+  .hero-countdown::after,
+  .section-dresscode::before,
+  .section-dresscode::after {
+    width: 100px;
+  }
+
   .carousel-wrapper {
     height: clamp(420px, 75vw, 580px) !important;
     border-radius: 12px;
@@ -2139,8 +2226,16 @@ section > .card {
   .section-galeria { padding: clamp(45px, 10vw, 65px) 0; }
   .section-galeria .container { width: 94%; }
 
-  /* Carrusel en móvil pequeño — 1 foto */
-   .carousel-wrapper {
+  /* Flores hero e itinerario en móvil */
+  .hero::before,
+  .hero::after,
+  .section-itinerario::before,
+  .section-itinerario::after {
+    width: 100vw;
+    height: 100vw;
+  }
+
+  .carousel-wrapper {
     height: clamp(400px, 80vw, 560px) !important;
   }
   .carousel-slide {
@@ -2162,10 +2257,6 @@ section > .card {
   h2 { font-size: 2.2rem !important; }
   .card { padding: 26px 18px; }
   .countdown span { font-size: 1.3rem; }
-  .overlay::before,.overlay::after { width: 100%; opacity: .10; }
-  .hero::before,.hero::after,
-  section:not(.hero)::before,
-  section:not(.hero)::after { width: 150px; opacity: .13; }
   .bank-card { padding: 20px 16px; }
   .bank-label { min-width: 75px; font-size: .70rem; }
   .bank-value { font-size: .92rem; }
@@ -2173,7 +2264,7 @@ section > .card {
   .event-actions { flex-direction: column; }
   .btn-map,.btn-agenda,.btn-confirm { width: 100%; justify-content: center; }
   .overlay-card { padding: 16px 20px 32px; }
-  .overlay-card .lead { font-size: .88rem; margin: 12px auto; }
+  .overlay-card .lead { font-size: .9rem; margin: 12px auto; }
   .overlay-card .buttons { gap: 14px; margin-top: 22px; }
   .overlay-card .buttons .btn {
     width: min(280px, 82vw);
@@ -2182,7 +2273,15 @@ section > .card {
     justify-content: center;
   }
 
-  /* Carrusel en móvil muy pequeño — 1 foto */
+  /* Flores hero e itinerario en móvil */
+  .hero::before,
+  .hero::after,
+  .section-itinerario::before,
+  .section-itinerario::after {
+    width: 100vw;
+    height: 100vw;
+  }
+
   .carousel-wrapper {
     height: clamp(360px, 85vw, 520px) !important;
   }
@@ -2213,6 +2312,14 @@ section > .card {
     min-width: 100% !important;
     padding: 0 !important;
   }
+ 
+  .hero::before,
+  .hero::after,
+  .section-itinerario::before,
+  .section-itinerario::after {
+    width: 100vw;
+    height: 100vw;
+  }
 }
 
 @media (max-width: 380px) {
@@ -2222,4 +2329,69 @@ section > .card {
   .carousel-btn { width: 38px; height: 38px; font-size: 1.3rem; }
   .carousel-btn.prev { left: 7px; }
   .carousel-btn.next { right: 7px; }
+  .hero::before,
+  .hero::after,
+  .section-itinerario::before,
+  .section-itinerario::after {
+    width: 70vw;
+    height: 70vw;
+  }
+}
+
+/* =========================================================
+   UX / CAPAS / DIVISORES
+   ========================================================= */
+section {
+  overflow: visible;
+}
+
+.section-divider {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  margin: 0;
+  transform: translate(-50%, 50%);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.section-divider img {
+  position: relative;
+  z-index: 21;
+}
+
+section + section {
+  position: relative;
+  z-index: 1 !important;
+}
+
+.section-divider {
+  isolation: isolate;
+}
+
+.hero {
+  margin-top: 68px;
+  min-height: calc(min(68svh, 720px) - 68px);
+}
+
+.rsvp-backdrop { z-index: 10010; }
+.rsvp-panel    { z-index: 10011; }
+.top-nav       { z-index: 9990; }
+.menu-backdrop { z-index: 9994; }
+.menu-panel    { z-index: 9995; }
+
+@media (max-width: 767px) {
+  .section-divider img { width: 175px; }
+  .hero {
+    margin-top: 68px;
+    min-height: calc(72svh - 68px);
+    padding-top: clamp(35px, 8vw, 60px);
+  }
+}
+
+@media (min-width: 1025px) {
+  .hero {
+    min-height: calc(min(74svh, 760px) - 68px);
+  }
 }
