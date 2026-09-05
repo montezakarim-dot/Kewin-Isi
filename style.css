@@ -385,7 +385,7 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
 }
 section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dresscode)::before {
   left: 0;
-  background-image: url('Flor left.png');
+  background-image: url('Flor Left.png');
   background-position: left top;
   animation: floatLeft 8s ease-in-out infinite;
 }
@@ -410,7 +410,7 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
   left: 0;
   width: 50vw;
   height: 75%;
-  background-image: url('Flor left.png');
+  background-image: url('Flor Left.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left top;
@@ -448,7 +448,7 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
   left: 0;
   width: 50vw;
   height: 100%;
-  background-image: url('Flor left.png');
+  background-image: url('Flor Left.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left top;
