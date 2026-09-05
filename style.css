@@ -2231,8 +2231,8 @@ section > .card {
   .hero::after,
   .section-itinerario::before,
   .section-itinerario::after {
-    width: 100vw;
-    height: 100vw;
+    width: 90vw;
+    height: 90vw;
   }
 
   .carousel-wrapper {
@@ -2278,8 +2278,8 @@ section > .card {
   .hero::after,
   .section-itinerario::before,
   .section-itinerario::after {
-    width: 100vw;
-    height: 100vw;
+    width: 70vw;
+    height: 70vw;
   }
 
   .carousel-wrapper {
@@ -2317,8 +2317,8 @@ section > .card {
   .hero::after,
   .section-itinerario::before,
   .section-itinerario::after {
-    width: 100vw;
-    height: 100vw;
+    width: 80vw;
+    height: 80vw;
   }
 }
 
@@ -2333,8 +2333,8 @@ section > .card {
   .hero::after,
   .section-itinerario::before,
   .section-itinerario::after {
-    width: 70vw;
-    height: 70vw;
+    width: 50vw;
+    height: 50vw;
   }
 }
 
