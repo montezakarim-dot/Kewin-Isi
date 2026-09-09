@@ -135,23 +135,473 @@
   }, 60);
 
   // Cuando la página cargó completamente
-  window.addEventListener("load", () => {
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    clearInterval(sparkleInterval);
+    // Terminar barra
+    bar.style.width = "100%";
     setTimeout(() => {
-      clearInterval(sparkleInterval);
-      // Terminar barra
-      bar.style.width = "100%";
+      // Ocultar loader
+      loader.classList.add("hidden");
+      // Mostrar pantalla de acceso
+      const accessGate = document.getElementById("accessGate");
+      if (accessGate) {
+        accessGate.classList.add("visible");
+      }
+      // Mantener la página bloqueada
+      document.body.classList.add("preload");
+    }, 600);
+  }, 800);
+});
+})();
+
+// ─── CONFIGURACIÓN ───────────────────────────────────────────
+
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbz3QPNw04C-jxW8s6nrfGQNfShABt50OdQfKsIw32oSjKUMHGtpX7R1Q0ZcwgkUgr3G1A/exec";
+
+const DIRECCION_CEREMONIA =
+  "Lo Campino 255, Quilicura, Santiago";
+
+const DIRECCION_RECEPCION =
+  "Casa Irene Eventos - La Cañada del Carmen, Lampa, Región Metropolitana";
+
+
+// ══════════════════════════════════════════
+// VALIDACIÓN DE INVITADO
+// ══════════════════════════════════════════
+
+let invitadoAutorizado = false;
+let nombreInvitado = "";
+let sexoInvitado = "";
+let telefonoInvitadoValidado = "";
+
+
+// ──────────────────────────────────────────
+// NORMALIZAR TELÉFONO
+// ──────────────────────────────────────────
+
+function normalizarTelefono(valor) {
+
+  let telefono = String(valor || "")
+    .replace(/\D/g, "");
+
+  // Si ingresan 569XXXXXXXX
+  if (
+    telefono.startsWith("56") &&
+    telefono.length === 11
+  ) {
+    telefono = telefono.substring(2);
+  }
+
+  return telefono;
+}
+
+
+// ──────────────────────────────────────────
+// NORMALIZAR SEXO
+// ──────────────────────────────────────────
+
+function normalizarSexo(valor) {
+
+  return String(valor || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+
+// ──────────────────────────────────────────
+// OBTENER TRATAMIENTO
+// ──────────────────────────────────────────
+
+function obtenerTratamiento(sexo) {
+
+  const valor = normalizarSexo(sexo);
+
+  const femenino = [
+    "f",
+    "femenino",
+    "mujer",
+    "female",
+    "invitada"
+  ];
+
+  const masculino = [
+    "m",
+    "masculino",
+    "hombre",
+    "male",
+    "invitado"
+  ];
+
+
+  if (femenino.includes(valor)) {
+
+    return {
+      invitacion: "invitada",
+      bienvenida: "Bienvenida"
+    };
+
+  }
+
+
+  if (masculino.includes(valor)) {
+
+    return {
+      invitacion: "invitado",
+      bienvenida: "Bienvenido"
+    };
+
+  }
+
+
+  return {
+    invitacion: "invitado/a",
+    bienvenida: "Bienvenido/a"
+  };
+}
+
+
+// ──────────────────────────────────────────
+// ACTUALIZAR TEXTO DEL OVERLAY
+// ──────────────────────────────────────────
+
+function actualizarTextoOverlay(sexo) {
+
+  const textoOverlay =
+    document.querySelector(".eyebrow_overlay");
+
+  if (!textoOverlay) return;
+
+  const tratamiento =
+    obtenerTratamiento(sexo);
+
+  textoOverlay.textContent =
+    `Estás ${tratamiento.invitacion} al matrimonio de:`;
+
+}
+
+
+// ══════════════════════════════════════════
+// VALIDAR INVITADO POR TELÉFONO
+// ══════════════════════════════════════════
+
+async function validarInvitado(e) {
+
+  e.preventDefault();
+
+
+  const input =
+    document.getElementById("telefonoInvitado");
+
+  const btn =
+    document.getElementById("accessBtn");
+
+  const message =
+    document.getElementById("accessMessage");
+
+
+  if (!input || !btn || !message) {
+    return;
+  }
+
+
+  let telefono =
+    normalizarTelefono(input.value);
+
+
+  input.value = telefono;
+
+
+  // ─────────────────────────────────────
+  // VALIDACIÓN LOCAL
+  // ─────────────────────────────────────
+
+  if (!/^\d{9}$/.test(telefono)) {
+
+    message.className =
+      "access-message error";
+
+    message.textContent =
+      "Por favor ingresa un número de celular válido de 9 dígitos.";
+
+    input.focus();
+
+    return;
+  }
+
+
+  // ─────────────────────────────────────
+  // BLOQUEAR BOTÓN
+  // ─────────────────────────────────────
+
+  btn.disabled = true;
+
+  btn.textContent =
+    "Verificando...";
+
+  message.className =
+    "access-message";
+
+  message.textContent = "";
+
+
+  try {
+
+    // Apps Script usa e.parameter,
+    // por eso enviamos URLSearchParams
+
+    const datos = new URLSearchParams();
+
+    datos.append(
+      "accion",
+      "validarTelefono"
+    );
+
+    datos.append(
+      "telefono",
+      telefono
+    );
+
+
+    const response =
+      await fetch(
+        APPS_SCRIPT_URL,
+        {
+          method: "POST",
+          body: datos
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        `Error HTTP: ${response.status}`
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Respuesta Apps Script:",
+      data
+    );
+
+
+    // ═════════════════════════════════════
+    // INVITADO ENCONTRADO
+    // ═════════════════════════════════════
+
+    if (data.resultado === "ok") {
+
+      invitadoAutorizado = true;
+
+      nombreInvitado =
+        data.nombre || "";
+
+      sexoInvitado =
+        data.sexo || "";
+
+      telefonoInvitadoValidado =
+        data.telefono || telefono;
+
+
+      const tratamiento =
+        obtenerTratamiento(
+          sexoInvitado
+        );
+
+
+      // ─────────────────────────────────
+      // MENSAJE DE BIENVENIDA
+      // ─────────────────────────────────
+
+      message.className =
+        "access-message success";
+
+
+      if (nombreInvitado) {
+
+        message.textContent =
+          `¡${tratamiento.bienvenida}, ${nombreInvitado}! 💜`;
+
+      } else {
+
+        message.textContent =
+          `¡${tratamiento.bienvenida}! 💜`;
+
+      }
+
+
+      // ─────────────────────────────────
+      // ACTUALIZAR OVERLAY
+      // ─────────────────────────────────
+
+      actualizarTextoOverlay(
+        sexoInvitado
+      );
+
+
+      // ─────────────────────────────────
+      // GUARDAR DATOS DURANTE LA SESIÓN
+      // ─────────────────────────────────
+
+      sessionStorage.setItem(
+        "invitadoAutorizado",
+        "true"
+      );
+
+
+      sessionStorage.setItem(
+        "nombreInvitado",
+        nombreInvitado
+      );
+
+
+      sessionStorage.setItem(
+        "sexoInvitado",
+        sexoInvitado
+      );
+
+
+      sessionStorage.setItem(
+        "telefonoInvitado",
+        telefonoInvitadoValidado
+      );
+
+
+      // ─────────────────────────────────
+      // PRECARGAR NOMBRE EN RSVP
+      // ─────────────────────────────────
+
+      const nombreRSVP =
+        document.getElementById("nombre");
+
+      if (nombreRSVP) {
+
+        nombreRSVP.value =
+          nombreInvitado;
+
+      }
+
+
+      // ─────────────────────────────────
+      // OCULTAR VALIDACIÓN
+      // ─────────────────────────────────
+
       setTimeout(() => {
-        loader.classList.add("hidden");
-        // Mostrar overlay de entrada
-        const overlay = document.getElementById("overlay");
-        overlay.classList.add("visible");
-      }, 600);
-    }, 800);
-  });
-})();// ─── CONFIGURACIÓN ───────────────────────────────────────────
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxmoJjXjn-9VFvnkT84U-f3K-YoEMXRYTDMN3LZH8ciVJkii92w92BJie_MQpuP5YN8w/exec";
-const DIRECCION_CEREMONIA  = "Lo Campino 255, Quilicura, Santiago";
-const DIRECCION_RECEPCION  = "Casa Irene Eventos - La Cañada del Carmen, Lampa, Región Metropolitana";
+
+        const accessGate =
+          document.getElementById(
+            "accessGate"
+          );
+
+
+        if (accessGate) {
+
+          accessGate.classList.remove(
+            "visible"
+          );
+
+          accessGate.classList.add(
+            "hidden"
+          );
+
+        }
+
+
+        // Mostrar overlay
+
+        const overlay =
+          document.getElementById(
+            "overlay"
+          );
+
+
+        if (overlay) {
+
+          overlay.classList.add(
+            "visible"
+          );
+
+        }
+
+      }, 900);
+
+
+    }
+
+
+    // ═════════════════════════════════════
+    // TELÉFONO NO ENCONTRADO
+    // ═════════════════════════════════════
+
+    else if (
+      data.resultado ===
+      "no_encontrado"
+    ) {
+
+      message.className =
+        "access-message error";
+
+      message.innerHTML =
+        "Este número no aparece en nuestra lista de invitados.<br>" +
+        "Si crees que debería estar registrado, " +
+        "comunícate con nosotros 💜";
+
+    }
+
+
+    // ═════════════════════════════════════
+    // ERROR DEVUELTO POR APPS SCRIPT
+    // ═════════════════════════════════════
+
+    else {
+
+      message.className =
+        "access-message error";
+
+      message.textContent =
+        data.mensaje ||
+        "No pudimos verificar tu invitación.";
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Error validando invitado:",
+      error
+    );
+
+
+    message.className =
+      "access-message error";
+
+
+    message.textContent =
+      "No pudimos verificar tu invitación en este momento. " +
+      "Por favor intenta nuevamente.";
+
+
+  } finally {
+
+    btn.disabled = false;
+
+    btn.textContent =
+      "Ingresar a la invitación";
+
+  }
+
+}
 
 // ─── ENTRADA AL SITIO ────────────────────────────────────────
 function enterSite(playMusic) {
@@ -648,51 +1098,290 @@ function mostrarToast() {
   setTimeout(() => toast.classList.remove("show"), 2800);
 }
 
-// ─── ENVIAR RSVP A GOOGLE SHEETS ─────────────────────────────
+// ══════════════════════════════════════════
+// ENVIAR RSVP A GOOGLE SHEETS
+// ══════════════════════════════════════════
+
 async function enviarRSVP(e) {
+
   e.preventDefault();
 
-  const nombre     = document.getElementById("nombre").value.trim();
-  const asistencia = document.getElementById("asistencia").value;
-  const cancion    = document.getElementById("cancion").value.trim();
-  const mensaje    = document.getElementById("mensaje").value.trim();
-  const btn        = document.getElementById("submitBtn");
-  const formMsg    = document.getElementById("formMsg");
 
-  if (!nombre || !asistencia) {
-    formMsg.textContent = "Por favor completa tu nombre y si asistirás.";
-    formMsg.style.color = "#c0392b";
+  const nombre =
+    document
+      .getElementById("nombre")
+      .value
+      .trim();
+
+
+  const asistencia =
+    document
+      .getElementById("asistencia")
+      .value;
+
+
+  const restriccion =
+    document
+      .getElementById("restriccion")
+      .value
+      .trim();
+
+
+  const cancion =
+    document
+      .getElementById("cancion")
+      .value
+      .trim();
+
+
+  const mensaje =
+    document
+      .getElementById("mensaje")
+      .value
+      .trim();
+
+
+  const btn =
+    document.getElementById(
+      "submitBtn"
+    );
+
+
+  const formMsg =
+    document.getElementById(
+      "formMsg"
+    );
+
+
+  // Recuperamos el teléfono que
+  // ya fue validado al entrar
+
+  const telefono =
+    telefonoInvitadoValidado ||
+    sessionStorage.getItem(
+      "telefonoInvitado"
+    ) ||
+    "";
+
+
+  // ─────────────────────────────────────
+  // VALIDACIONES
+  // ─────────────────────────────────────
+
+  if (!nombre) {
+
+    formMsg.textContent =
+      "No pudimos identificar tu nombre.";
+
+    formMsg.style.color =
+      "#c0392b";
+
     return;
   }
 
-  btn.disabled    = true;
-  btn.textContent = "Enviando...";
+
+  if (!telefono) {
+
+    formMsg.textContent =
+      "No pudimos identificar tu número de celular. Actualiza la página e ingresa nuevamente.";
+
+    formMsg.style.color =
+      "#c0392b";
+
+    return;
+  }
+
+
+  if (!asistencia) {
+
+    formMsg.textContent =
+      "Por favor indica si asistirás.";
+
+    formMsg.style.color =
+      "#c0392b";
+
+    return;
+  }
+
+
+  btn.disabled = true;
+
+  btn.textContent =
+    "Enviando...";
+
   formMsg.textContent = "";
 
-  // Columnas: Fecha | Nombre | Asistencia | Canción | Mensaje
-  const payload = { nombre, asistencia, cancion, mensaje };
 
   try {
-    await fetch(APPS_SCRIPT_URL, {
-      method:  "POST",
-      mode:    "no-cors",
-      headers: { "Content-Type":"application/json" },
-      body:    JSON.stringify(payload)
-    });
 
-    formMsg.textContent = "¡Gracias! Tu confirmación fue enviada con éxito 💜";
-    formMsg.style.color = "#a37fc0";
-    document.getElementById("rsvpForm").reset();
 
-    // Cerrar panel después de 2.5s
-    setTimeout(() => cerrarRSVP(), 2500);
+    // Apps Script usa e.parameter
+
+    const datos =
+      new URLSearchParams();
+
+
+    datos.append(
+      "accion",
+      "rsvp"
+    );
+
+
+    datos.append(
+      "nombre",
+      nombre
+    );
+
+
+    datos.append(
+      "telefono",
+      telefono
+    );
+
+
+    datos.append(
+      "asistencia",
+      asistencia
+    );
+
+
+    datos.append(
+      "restriccion",
+      restriccion
+    );
+
+
+    datos.append(
+      "cancion",
+      cancion
+    );
+
+
+    datos.append(
+      "mensaje",
+      mensaje
+    );
+
+
+    const response =
+      await fetch(
+        APPS_SCRIPT_URL,
+        {
+          method: "POST",
+          body: datos
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        `Error HTTP: ${response.status}`
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    console.log(
+      "Respuesta RSVP:",
+      data
+    );
+
+
+    // ─────────────────────────────────
+    // RSVP GUARDADO
+    // ─────────────────────────────────
+
+    if (data.resultado === "ok") {
+
+      formMsg.textContent =
+        "¡Gracias! Tu confirmación fue registrada correctamente 💜";
+
+      formMsg.style.color =
+        "#a37fc0";
+
+
+      // No limpiamos inmediatamente
+      // el nombre oficial
+
+      document
+        .getElementById(
+          "asistencia"
+        )
+        .value = "";
+
+
+      document
+        .getElementById(
+          "restriccion"
+        )
+        .value = "";
+
+
+      document
+        .getElementById(
+          "cancion"
+        )
+        .value = "";
+
+
+      document
+        .getElementById(
+          "mensaje"
+        )
+        .value = "";
+
+
+      setTimeout(
+        () => cerrarRSVP(),
+        2500
+      );
+
+    }
+
+
+    // ─────────────────────────────────
+    // ERROR DESDE APPS SCRIPT
+    // ─────────────────────────────────
+
+    else {
+
+      formMsg.textContent =
+        data.mensaje ||
+        "No pudimos registrar tu confirmación.";
+
+      formMsg.style.color =
+        "#c0392b";
+
+    }
+
 
   } catch (error) {
-    formMsg.textContent = "Hubo un error al enviar. Por favor intenta de nuevo.";
-    formMsg.style.color = "#c0392b";
-    console.error(error);
+
+    console.error(
+      "Error enviando RSVP:",
+      error
+    );
+
+
+    formMsg.textContent =
+      "Hubo un error al enviar. Por favor intenta nuevamente.";
+
+    formMsg.style.color =
+      "#c0392b";
+
+
   } finally {
-    btn.disabled    = false;
-    btn.textContent = "Confirmar asistencia";
+
+    btn.disabled = false;
+
+    btn.textContent =
+      "Confirmar asistencia";
+
   }
+
 }
