@@ -138,88 +138,189 @@
 window.addEventListener("load", () => {
   setTimeout(() => {
     clearInterval(sparkleInterval);
-    // Terminar barra
     bar.style.width = "100%";
     setTimeout(() => {
-      // Ocultar loader
+      /* Ocultar loader */
       loader.classList.add("hidden");
-      // Mostrar pantalla de acceso
-      const accessGate = document.getElementById("accessGate");
-      if (accessGate) {
-        accessGate.classList.add("visible");
+      const accesoRestaurado =
+        restaurarAccesoReciente();
+      if (!accesoRestaurado) {
+        const accessGate =
+          document.getElementById(
+            "accessGate"
+          );
+        if (accessGate) {
+          accessGate.classList.remove(
+            "hidden"
+          );
+          accessGate.classList.add(
+            "visible"
+          );
+        }
+        document.body.classList.add(
+          "preload"
+        );
       }
-      // Mantener la página bloqueada
-      document.body.classList.add("preload");
     }, 600);
   }, 800);
+
 });
 })();
 
 // ─── CONFIGURACIÓN ───────────────────────────────────────────
-
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbz3QPNw04C-jxW8s6nrfGQNfShABt50OdQfKsIw32oSjKUMHGtpX7R1Q0ZcwgkUgr3G1A/exec";
-
+  "https://script.google.com/macros/s/AKfycbwGQNl7kiDHABeemBRpeEhP2b5NfEjbe_pu4B8NCICYpNN3MSy2GbL6k9dahgmaoYOSEA/exec";
 const DIRECCION_CEREMONIA =
   "Lo Campino 255, Quilicura, Santiago";
-
 const DIRECCION_RECEPCION =
   "Casa Irene Eventos - La Cañada del Carmen, Lampa, Región Metropolitana";
-
 
 // ══════════════════════════════════════════
 // VALIDACIÓN DE INVITADO
 // ══════════════════════════════════════════
-
 let invitadoAutorizado = false;
 let nombreInvitado = "";
 let sexoInvitado = "";
 let telefonoInvitadoValidado = "";
+const ACCESS_CACHE_KEY = "kewinIsiAccess";
+const ACCESS_CACHE_MINUTES = 30;
 
-
-// ──────────────────────────────────────────
-// NORMALIZAR TELÉFONO
-// ──────────────────────────────────────────
-
-function normalizarTelefono(valor) {
-
-  let telefono = String(valor || "")
+// ══════════════════════════════════════════
+// TELÉFONO INTERNACIONAL
+// ══════════════════════════════════════════
+function soloDigitos(valor) {
+  return String(valor || "")
     .replace(/\D/g, "");
-
-  // Si ingresan 569XXXXXXXX
-  if (
-    telefono.startsWith("56") &&
-    telefono.length === 11
-  ) {
-    telefono = telefono.substring(2);
-  }
-
-  return telefono;
 }
 
+// ──────────────────────────────────────────
+// ACTUALIZAR TEXTO DE AYUDA
+// SEGÚN EL PAÍS
+// ──────────────────────────────────────────
+function actualizarAyudaTelefono() {
+  const select =
+    document.getElementById("codigoPais");
+  const input =
+    document.getElementById("telefonoInvitado");
+  const help =
+    document.getElementById("phoneHelp");
+  if (!select || !input || !help) {
+    return;
+  }
+  const codigo =
+    soloDigitos(select.value);
+  /* Texto fijo */
+  help.textContent =
+    "Selecciona el código de tu país e ingresa el número de tu celular.";
+  /* Chile */
+  if (codigo === "56") {
+    input.placeholder =
+      "9XXXXXXXX";
+    input.maxLength = 9;
+  }
+  /* Otros países */
+  else {
+    input.placeholder =
+      "Número de celular";
+    /*
+     * E.164 permite máximo
+     * 15 dígitos incluyendo código.
+     */
+    input.maxLength =
+      Math.max(
+        6,
+        15 - codigo.length
+      );
+  }
+}
 
 // ──────────────────────────────────────────
-// NORMALIZAR SEXO
-// ──────────────────────────────────────────
+// CONSTRUIR TELÉFONO COMPLETO
+// ─────────────────────────────────────────
+function obtenerTelefonoCompleto() {
+  const select =
+    document.getElementById("codigoPais");
+  const input =
+    document.getElementById("telefonoInvitado");
+  if (!select || !input) {
+    return {
+      codigo: "",
+      local: "",
+      completo: ""
+    };
+  }
 
+  const codigo =
+    soloDigitos(select.value);
+  let local =
+    soloDigitos(input.value);
+    if (
+    codigo &&
+    local.startsWith(codigo)
+  ) {
+    const posibleLocal =
+      local.substring(
+        codigo.length
+      );
+    if (
+      posibleLocal.length >= 6
+    ) {
+      local =
+        posibleLocal;
+    }
+  }
+
+  input.value =
+    local;
+  return {
+    codigo: codigo,
+    local: local,
+    completo:
+      `${codigo}${local}`
+  };
+}
+
+// ──────────────────────────────────────────
+// VALIDAR FORMATO
+// ──────────────────────────────────────────
+function telefonoEsValido(
+  codigo,
+  local,
+  completo
+) {
+  if (codigo === "56") {
+    return (
+      /^\d{9}$/.test(local) &&
+      /^56\d{9}$/.test(completo)
+    );
+  }
+
+  return (
+    /^\d{7,15}$/.test(completo) &&
+    local.length >= 6
+  );
+
+}
+// ══════════════════════════════════════════
+// SEXO DEL INVITADO
+// ══════════════════════════════════════════
 function normalizarSexo(valor) {
-
   return String(valor || "")
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
+    .replace(
+      /[\u0300-\u036f]/g,
+      ""
+    );
 }
 
-
 // ──────────────────────────────────────────
-// OBTENER TRATAMIENTO
+// INVITADO / INVITADA
 // ──────────────────────────────────────────
-
 function obtenerTratamiento(sexo) {
-
-  const valor = normalizarSexo(sexo);
-
+  const valor =
+    normalizarSexo(sexo);
   const femenino = [
     "f",
     "femenino",
@@ -236,365 +337,639 @@ function obtenerTratamiento(sexo) {
     "invitado"
   ];
 
-
-  if (femenino.includes(valor)) {
-
+  if (
+    femenino.includes(valor)
+  ) {
     return {
-      invitacion: "invitada",
-      bienvenida: "Bienvenida"
+      invitacion:
+        "estás invitada",
+      bienvenida:
+        "Bienvenida"
     };
-
   }
 
-
-  if (masculino.includes(valor)) {
-
+  if (
+    masculino.includes(valor)
+  ) {
     return {
-      invitacion: "invitado",
-      bienvenida: "Bienvenido"
+      invitacion:
+        "estás invitado",
+      bienvenida:
+        "Bienvenido"
     };
-
   }
-
 
   return {
-    invitacion: "invitado/a",
-    bienvenida: "Bienvenido/a"
+    invitacion:
+      "están invitados",
+    bienvenida:
+      "Bienvenidos"
   };
 }
-
 
 // ──────────────────────────────────────────
 // ACTUALIZAR TEXTO DEL OVERLAY
 // ──────────────────────────────────────────
-
-function actualizarTextoOverlay(sexo) {
-
+function actualizarTextoOverlay(
+  sexo,
+  nombre
+) {
   const textoOverlay =
-    document.querySelector(".eyebrow_overlay");
-
-  if (!textoOverlay) return;
+    document.getElementById(
+      "overlayInviteText"
+    )
+    ||
+    document.querySelector(
+      ".eyebrow_overlay"
+    );
+  if (!textoOverlay) {
+    return;
+  }
 
   const tratamiento =
     obtenerTratamiento(sexo);
+  const nombreLimpio =
+    String(nombre || "")
+      .trim();
+  if (nombreLimpio) {
+    textoOverlay.textContent =
+      `${nombreLimpio}, ${tratamiento.invitacion} al matrimonio de:`;
+  }
+  else {
+    textoOverlay.textContent =
+      `Estás ${tratamiento.invitacion} al matrimonio de:`;
+  }
+}
+// ══════════════════════════════════════════
+// MEMORIA TEMPORAL DEL ACCESO
+// ══════════════════════════════════════════
+function guardarAccesoReciente(tipo) {
+  const registro = {
+    tipo: tipo,
+    nombre:
+      nombreInvitado,
+    sexo:
+      sexoInvitado,
+    telefono:
+      telefonoInvitadoValidado,
+    expira:
+      Date.now() +
+      ACCESS_CACHE_MINUTES *
+      60 *
+      1000
+  };
+  try {
+    localStorage.setItem(
+      ACCESS_CACHE_KEY,
+      JSON.stringify(
+        registro
+      )
+    );
+  }
+  catch (error) {
+    console.warn(
+      "No se pudo guardar acceso:",
+      error
+    );
+  }
 
-  textoOverlay.textContent =
-    `Estás ${tratamiento.invitacion} al matrimonio de:`;
+  // Mantener también sessionStorage
+  // porque RSVP utiliza estos datos.
+  try {
+    sessionStorage.setItem(
+      "invitadoAutorizado",
+      tipo === "invitado"
+        ? "true"
+        : "false"
+    );
+    sessionStorage.setItem(
+      "nombreInvitado",
+      nombreInvitado
+    );
+    sessionStorage.setItem(
+      "sexoInvitado",
+      sexoInvitado
+    );
 
+    sessionStorage.setItem(
+      "telefonoInvitado",
+      telefonoInvitadoValidado
+    );
+  }
+  catch (error) {
+    console.warn(
+      "No se pudo guardar sesión:",
+      error
+    );
+  }
 }
 
+// ──────────────────────────────────────────
+// LEER ACCESO GUARDADO
+// ──────────────────────────────────────────
+function leerAccesoReciente() {
+  try {
+    const raw =
+      localStorage.getItem(
+        ACCESS_CACHE_KEY
+      );
+    if (!raw) {
+      return null;
+    }
+    const data =
+      JSON.parse(raw);
+    // Si pasaron 30 minutos
+    // volvemos a validar.
+    if (
+      !data.expira ||
+      Date.now() > data.expira
+    ) {
+      localStorage.removeItem(
+        ACCESS_CACHE_KEY
+      );
+      return null;
+    }
+    return data;
+  }
+  catch (error) {
+    return null;
+  }
+}
 
 // ══════════════════════════════════════════
-// VALIDAR INVITADO POR TELÉFONO
+// OCULTAR PANTALLA DE TELÉFONO
 // ══════════════════════════════════════════
+function ocultarPantallaAcceso() {
+  const accessGate =
+    document.getElementById(
+      "accessGate"
+    );
+  if (!accessGate) {
+    return;
+  }
+  accessGate.classList.remove(
+    "visible"
+  );
+  accessGate.classList.add(
+    "hidden"
+  );
+}
 
+// ══════════════════════════════════════════
+// INVITADO AUTORIZADO
+// ══════════════════════════════════════════
+function activarVistaInvitado() {
+  document.body.classList.remove(
+    "guest-view"
+  );
+  invitadoAutorizado = true;
+  // Personalizar overlay
+  actualizarTextoOverlay(
+    sexoInvitado,
+    nombreInvitado
+  );
+  // Precargar nombre RSVP
+  const nombreRSVP =
+    document.getElementById(
+      "nombre"
+    );
+  if (
+    nombreRSVP &&
+    nombreInvitado
+  ) {
+    nombreRSVP.value =
+      nombreInvitado;
+  }
+  ocultarPantallaAcceso();
+  // Mostrar overlay
+  const overlay =
+    document.getElementById(
+      "overlay"
+    );
+  if (overlay) {
+    overlay.style.display =
+      "";
+    overlay.classList.remove(
+      "hidden"
+    );
+    overlay.classList.add(
+      "visible"
+    );
+  }
+  document.body.classList.add(
+    "preload"
+  );
+}
+// ══════════════════════════════════════════
+// PERSONA NO INVITADA
+// ══════════════════════════════════════════
+function activarVistaVisitante() {
+  invitadoAutorizado =
+    false;
+  // Activamos modo público
+  document.body.classList.add(
+    "guest-view"
+  );
+  ocultarPantallaAcceso();
+  // NO mostrar overlay
+  const overlay =
+    document.getElementById(
+      "overlay"
+    );
+  if (overlay) {
+    overlay.classList.remove(
+      "visible"
+    );
+    overlay.classList.add(
+      "hidden"
+    );
+    overlay.style.display =
+      "none";
+  }
+  // ═════════════════════════════════════
+  // CAMBIAR TEXTO DEL HERO
+  // ═════════════════════════════════════
+  const heroLead =
+    document.getElementById(
+      "heroLead"
+    );
+  if (heroLead) {
+    heroLead.textContent =
+      "Aunque no podamos compartir este día contigo de manera presencial, " +
+      "queremos compartir contigo un pedacito de este momento tan importante. " +
+      "Nos hace mucha ilusión que conozcas nuestra historia y seas parte " +
+      "de este nuevo capítulo que comenzamos juntos. 💜";
+  }
+  // ═════════════════════════════════════
+  // CAMBIAR TÍTULO DE DETALLES
+  // ═════════════════════════════════════
+  const detallesTitle =
+    document.querySelector(
+      "#detalles .section-title"
+    );
+  if (detallesTitle) {
+    detallesTitle.textContent =
+      "Nuestra ceremonia";
+  }
+
+  // ═════════════════════════════════════
+  // FOOTER
+  // ═════════════════════════════════════
+  const footerText =
+    document.querySelector(
+      ".footer-text"
+    );
+  if (footerText) {
+    footerText.textContent =
+      "Gracias por ser parte de nuestra historia";
+  }
+  // ═════════════════════════════════════
+  // MOSTRAR MENÚ
+  // ═════════════════════════════════════
+  const topNav =
+    document.getElementById(
+      "topNav"
+    );
+  if (topNav) {
+    topNav.classList.add(
+      "menu-visible"
+    );
+  }
+  // ═════════════════════════════════════
+  // MOSTRAR HERO
+  // ═════════════════════════════════════
+  const hero =
+    document.querySelector(
+      ".hero"
+    );
+  document.body.classList.remove(
+    "preload"
+  );
+  document.documentElement
+    .classList.remove(
+      "preload-lock"
+    );
+  if (hero) {
+    hero.classList.add(
+      "hero-visible"
+    );
+  }
+  // Ir directamente arriba
+  window.scrollTo({
+    top: 0,
+    behavior: "auto"
+  });
+}
+// ══════════════════════════════════════════
+// RESTAURAR ACCESO
+// SAFARI / RECARGA / SEGUNDA ENTRADA
+// ══════════════════════════════════════════
+function restaurarAccesoReciente() {
+  const data =
+    leerAccesoReciente();
+  if (
+    !data ||
+    !data.tipo
+  ) {
+    return false;
+  }
+
+  nombreInvitado =
+    data.nombre || "";
+  sexoInvitado =
+    data.sexo || "";
+  telefonoInvitadoValidado =
+    data.telefono || "";
+  // INVITADO
+  if (
+    data.tipo === "invitado"
+  ) {
+    activarVistaInvitado();
+    return true;
+  }
+  // VISITANTE
+  if (
+    data.tipo === "visitante"
+  ) {
+    activarVistaVisitante();
+    return true;
+  }
+  return false;
+}
+// ══════════════════════════════════════════
+// FETCH CON TIEMPO MÁXIMO
+// ══════════════════════════════════════════
+async function fetchConTimeout(
+  url,
+  opciones = {},
+  timeoutMs = 25000
+) {
+  const controller =
+    new AbortController();
+  const timer =
+    setTimeout(
+      () => controller.abort(),
+      timeoutMs
+    );
+  try {
+    return await fetch(
+      url,
+      {
+        ...opciones,
+        signal:
+          controller.signal,
+        cache:
+          "no-store"
+      }
+    );
+  }
+
+  finally {
+    clearTimeout(
+      timer
+    );
+  }
+}
+
+// ══════════════════════════════════════════
+// VALIDAR INVITADO
+// ══════════════════════════════════════════
 async function validarInvitado(e) {
-
   e.preventDefault();
-
-
   const input =
-    document.getElementById("telefonoInvitado");
-
+    document.getElementById(
+      "telefonoInvitado"
+    );
   const btn =
-    document.getElementById("accessBtn");
+    document.getElementById(
+      "accessBtn"
+    );
 
   const message =
-    document.getElementById("accessMessage");
+    document.getElementById(
+      "accessMessage"
+    );
 
 
-  if (!input || !btn || !message) {
+  if (
+    !input ||
+    !btn ||
+    !message
+  ) {
+
     return;
+
   }
 
-
-  let telefono =
-    normalizarTelefono(input.value);
-
-
-  input.value = telefono;
-
-
-  // ─────────────────────────────────────
+  const telefonoData =
+    obtenerTelefonoCompleto();
+  // ═════════════════════════════════════
   // VALIDACIÓN LOCAL
-  // ─────────────────────────────────────
-
-  if (!/^\d{9}$/.test(telefono)) {
-
+  // ═════════════════════════════════════
+  if (
+    !telefonoEsValido(
+      telefonoData.codigo,
+      telefonoData.local,
+      telefonoData.completo
+    )
+  ) {
     message.className =
       "access-message error";
-
-    message.textContent =
-      "Por favor ingresa un número de celular válido de 9 dígitos.";
-
+    if (
+      telefonoData.codigo === "56"
+    ) {
+      message.textContent =
+        "Para Chile ingresa los 9 dígitos de tu celular, por ejemplo 987654321.";
+    }
+    else {
+      message.textContent =
+        "Revisa el código de país y el número ingresado.";
+    }
     input.focus();
-
     return;
   }
-
-
-  // ─────────────────────────────────────
-  // BLOQUEAR BOTÓN
-  // ─────────────────────────────────────
-
-  btn.disabled = true;
-
+  // ═════════════════════════════════════
+  // VERIFICANDO
+  // ═════════════════════════════════════
+  btn.disabled =
+    true;
   btn.textContent =
     "Verificando...";
-
   message.className =
     "access-message";
-
-  message.textContent = "";
-
-
+  message.textContent =
+    "";
   try {
+    const parametros =
+  new URLSearchParams({
+    accion:
+      "validarTelefono",
+    telefono:
+      telefonoData.completo,
+    t:
+      Date.now().toString()
+  });
 
-    // Apps Script usa e.parameter,
-    // por eso enviamos URLSearchParams
+const urlValidacion =
+  `${APPS_SCRIPT_URL}?${parametros.toString()}`;
 
-    const datos = new URLSearchParams();
+const response =
+  await fetchConTimeout(
+    urlValidacion,
+    {
+      method:
+        "GET",
+      cache:
+        "no-store"
+    },
+    25000
+  );
+if (!response.ok) {
+  throw new Error(
+    `Error HTTP: ${response.status}`
+  );
+}
 
-    datos.append(
-      "accion",
-      "validarTelefono"
-    );
+const data =
+  await response.json();
 
-    datos.append(
-      "telefono",
-      telefono
-    );
+console.log(
+  "Respuesta Apps Script:",
+  data
+);
 
-
-    const response =
-      await fetch(
-        APPS_SCRIPT_URL,
-        {
-          method: "POST",
-          body: datos
-        }
-      );
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        `Error HTTP: ${response.status}`
-      );
-
-    }
-
-
-    const data =
-      await response.json();
-
-
-    console.log(
-      "Respuesta Apps Script:",
-      data
-    );
-
-
+if (
+  data.estado === "ok" &&
+  !data.resultado
+) {
+  throw new Error(
+    "VERSION_APPS_SCRIPT_INCORRECTA"
+  );
+}
     // ═════════════════════════════════════
     // INVITADO ENCONTRADO
     // ═════════════════════════════════════
-
-    if (data.resultado === "ok") {
-
-      invitadoAutorizado = true;
-
+    if (
+      data.resultado === "ok"
+    ) {
+      invitadoAutorizado =
+        true;
       nombreInvitado =
         data.nombre || "";
-
       sexoInvitado =
         data.sexo || "";
-
       telefonoInvitadoValidado =
-        data.telefono || telefono;
-
-
+        soloDigitos(
+          data.telefono ||
+          telefonoData.completo
+        );
       const tratamiento =
         obtenerTratamiento(
           sexoInvitado
         );
-
-
-      // ─────────────────────────────────
-      // MENSAJE DE BIENVENIDA
-      // ─────────────────────────────────
-
+      // Mensaje antes del overlay
       message.className =
         "access-message success";
-
-
-      if (nombreInvitado) {
-
+      if (
+        nombreInvitado
+      ) {
         message.textContent =
           `¡${tratamiento.bienvenida}, ${nombreInvitado}! 💜`;
-
-      } else {
-
+      }
+      else {
         message.textContent =
           `¡${tratamiento.bienvenida}! 💜`;
-
       }
-
-
-      // ─────────────────────────────────
-      // ACTUALIZAR OVERLAY
-      // ─────────────────────────────────
-
-      actualizarTextoOverlay(
-        sexoInvitado
+      // Guardar por 30 minutos
+      guardarAccesoReciente(
+        "invitado"
       );
-
-
-      // ─────────────────────────────────
-      // GUARDAR DATOS DURANTE LA SESIÓN
-      // ─────────────────────────────────
-
-      sessionStorage.setItem(
-        "invitadoAutorizado",
-        "true"
+      // Mostrar overlay
+      setTimeout(
+        () => {
+          activarVistaInvitado();
+        },
+        450
       );
-
-
-      sessionStorage.setItem(
-        "nombreInvitado",
-        nombreInvitado
-      );
-
-
-      sessionStorage.setItem(
-        "sexoInvitado",
-        sexoInvitado
-      );
-
-
-      sessionStorage.setItem(
-        "telefonoInvitado",
-        telefonoInvitadoValidado
-      );
-
-
-      // ─────────────────────────────────
-      // PRECARGAR NOMBRE EN RSVP
-      // ─────────────────────────────────
-
-      const nombreRSVP =
-        document.getElementById("nombre");
-
-      if (nombreRSVP) {
-
-        nombreRSVP.value =
-          nombreInvitado;
-
-      }
-
-
-      // ─────────────────────────────────
-      // OCULTAR VALIDACIÓN
-      // ─────────────────────────────────
-
-      setTimeout(() => {
-
-        const accessGate =
-          document.getElementById(
-            "accessGate"
-          );
-
-
-        if (accessGate) {
-
-          accessGate.classList.remove(
-            "visible"
-          );
-
-          accessGate.classList.add(
-            "hidden"
-          );
-
-        }
-
-
-        // Mostrar overlay
-
-        const overlay =
-          document.getElementById(
-            "overlay"
-          );
-
-
-        if (overlay) {
-
-          overlay.classList.add(
-            "visible"
-          );
-
-        }
-
-      }, 900);
-
-
+      return;
     }
-
-
     // ═════════════════════════════════════
-    // TELÉFONO NO ENCONTRADO
+    // NO ESTÁ EN LISTA
     // ═════════════════════════════════════
-
-    else if (
+    if (
       data.resultado ===
-      "no_encontrado"
+        "no_encontrado"
+      ||
+      data.resultado ===
+        "no_autorizado"
     ) {
-
+      nombreInvitado =
+        "";
+      sexoInvitado =
+        "";
+      telefonoInvitadoValidado =
+        telefonoData.completo;
       message.className =
-        "access-message error";
-
-      message.innerHTML =
-        "Este número no aparece en nuestra lista de invitados.<br>" +
-        "Si crees que debería estar registrado, " +
-        "comunícate con nosotros 💜";
-
-    }
-
-
-    // ═════════════════════════════════════
-    // ERROR DEVUELTO POR APPS SCRIPT
-    // ═════════════════════════════════════
-
-    else {
-
-      message.className =
-        "access-message error";
-
+        "access-message";
       message.textContent =
-        data.mensaje ||
-        "No pudimos verificar tu invitación.";
+        "Gracias por visitarnos 💜 Queremos compartir contigo un pedacito de nuestra historia.";
+      // Recordar vista pública
 
+      guardarAccesoReciente(
+        "visitante"
+      );
+
+      setTimeout(
+        () => {
+          activarVistaVisitante();
+        },
+        300
+      );
+      return;
     }
-
-
-  } catch (error) {
-
-    console.error(
-      "Error validando invitado:",
-      error
-    );
-
-
+    // ═════════════════════════════════════
+    // OTRO ERROR APPS SCRIPT
+    // ═════════════════════════════════════
     message.className =
       "access-message error";
-
-
     message.textContent =
-      "No pudimos verificar tu invitación en este momento. " +
-      "Por favor intenta nuevamente.";
+      data.mensaje ||
+      "No pudimos verificar tu acceso en este momento.";
+  }
+  catch (error) {
+  console.error(
+    "Error validando invitado:",
+    error
+  );
+  message.className =
+    "access-message error";
+  if (
+    error &&
+    error.name === "AbortError"
+  ) {
+    message.textContent =
+      "No fue posible completar la validación. Por favor intenta nuevamente.";
+  }
+  else if (
+    error &&
+    error.message ===
+      "VERSION_APPS_SCRIPT_INCORRECTA"
+  ) {
+    message.textContent =
+      "Estamos actualizando la invitación. Por favor intenta nuevamente en unos segundos.";
+  }
+  else {
+    message.textContent =
+      "No pudimos verificar tu número en este momento. Por favor intenta nuevamente.";
+  }
+}
+
+  finally {
 
 
-  } finally {
+    btn.disabled =
+      false;
 
-    btn.disabled = false;
 
     btn.textContent =
       "Ingresar a la invitación";
@@ -602,6 +977,50 @@ async function validarInvitado(e) {
   }
 
 }
+
+
+// ══════════════════════════════════════════
+// INICIALIZAR SELECTOR DE PAÍS
+// ══════════════════════════════════════════
+
+document.addEventListener(
+
+  "DOMContentLoaded",
+
+  () => {
+
+    actualizarAyudaTelefono();
+
+  }
+
+);
+
+
+// ══════════════════════════════════════════
+// SAFARI
+// ══════════════════════════════════════════
+
+window.addEventListener(
+
+  "pageshow",
+
+  (event) => {
+
+
+    // Safari puede restaurar la página
+    // desde su memoria bfcache.
+
+    if (
+      event.persisted
+    ) {
+
+      restaurarAccesoReciente();
+
+    }
+
+  }
+
+);
 
 // ─── ENTRADA AL SITIO ────────────────────────────────────────
 function enterSite(playMusic) {
@@ -1213,56 +1632,37 @@ async function enviarRSVP(e) {
 
 
   try {
-
-
     // Apps Script usa e.parameter
-
     const datos =
       new URLSearchParams();
-
-
     datos.append(
       "accion",
       "rsvp"
     );
-
-
     datos.append(
       "nombre",
       nombre
     );
-
-
     datos.append(
       "telefono",
       telefono
     );
-
-
     datos.append(
       "asistencia",
       asistencia
     );
-
-
     datos.append(
       "restriccion",
       restriccion
     );
-
-
     datos.append(
       "cancion",
       cancion
     );
-
-
     datos.append(
       "mensaje",
       mensaje
     );
-
-
     const response =
       await fetch(
         APPS_SCRIPT_URL,
@@ -1271,117 +1671,75 @@ async function enviarRSVP(e) {
           body: datos
         }
       );
-
-
     if (!response.ok) {
-
       throw new Error(
         `Error HTTP: ${response.status}`
       );
-
     }
-
-
     const data =
       await response.json();
-
-
     console.log(
       "Respuesta RSVP:",
       data
     );
-
-
     // ─────────────────────────────────
     // RSVP GUARDADO
     // ─────────────────────────────────
-
     if (data.resultado === "ok") {
-
       formMsg.textContent =
         "¡Gracias! Tu confirmación fue registrada correctamente 💜";
-
       formMsg.style.color =
         "#a37fc0";
-
-
       // No limpiamos inmediatamente
       // el nombre oficial
-
       document
         .getElementById(
           "asistencia"
         )
         .value = "";
-
-
       document
         .getElementById(
           "restriccion"
         )
         .value = "";
-
-
       document
         .getElementById(
           "cancion"
         )
         .value = "";
-
-
       document
         .getElementById(
           "mensaje"
         )
         .value = "";
-
-
       setTimeout(
         () => cerrarRSVP(),
         2500
       );
-
     }
-
-
     // ─────────────────────────────────
     // ERROR DESDE APPS SCRIPT
     // ─────────────────────────────────
-
     else {
-
       formMsg.textContent =
         data.mensaje ||
         "No pudimos registrar tu confirmación.";
-
       formMsg.style.color =
         "#c0392b";
-
     }
-
-
   } catch (error) {
-
     console.error(
       "Error enviando RSVP:",
       error
     );
-
-
     formMsg.textContent =
       "Hubo un error al enviar. Por favor intenta nuevamente.";
-
     formMsg.style.color =
       "#c0392b";
-
-
-  } finally {
-
+  } 
+  finally {
     btn.disabled = false;
-
     btn.textContent =
       "Confirmar asistencia";
-
   }
-
 }

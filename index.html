@@ -37,28 +37,62 @@
 <div class="sparkles-global" id="sparklesGlobal"></div>
 </div>
 
-<!--VALIDACIÓN DE INVITADO-->
+<!-- VALIDACIÓN DE INVITADO -->
 <div class="access-gate" id="accessGate">
   <div class="access-card">
     <div class="access-ornament">♡</div>
-    <p class="access-eyebrow">Kewin & Isi</p>
+    <p class="access-eyebrow">
+      Kewin & Isi
+    </p>
     <h2 class="access-title">
       Una invitación especial
     </h2>
     <p class="access-text">
-      Para acceder a nuestra invitación, por favor ingresa tu número de celular.
+      Para acceder a nuestra invitación,
+      por favor ingresa tu número de celular.
     </p>
-
-    <form id="accessForm" onsubmit="validarInvitado(event)">
-
+    <form
+      id="accessForm"
+      onsubmit="validarInvitado(event)"
+    >
       <div class="access-field">
         <label for="telefonoInvitado">
           Número de celular
         </label>
-
         <div class="phone-input">
-          <span class="phone-prefix">+56</span>
-
+          <select
+            id="codigoPais"
+            class="country-select"
+            aria-label="Código de país"
+            onchange="actualizarAyudaTelefono()" >
+            <option value="56" selected>+56</option>
+            <option value="54">+54</option>
+            <option value="591">+591</option>
+            <option value="55">+55</option>
+            <option value="57">+57</option>
+            <option value="506">+506</option>
+            <option value="53">+53</option>
+            <option value="593">+593</option>
+            <option value="503">+503</option>
+            <option value="502">+502</option>
+            <option value="504">+504</option>
+            <option value="52">+52</option>
+            <option value="505">+505</option>
+            <option value="507">+507</option>
+            <option value="595">+595</option>
+            <option value="51">+51</option>
+            <option value="1">+1</option>
+            <option value="598">+598</option>
+            <option value="58">+58</option>
+            <option value="34">+34</option>
+            <option value="39">+39</option>
+            <option value="33">+33</option>
+            <option value="49">+49</option>
+            <option value="44">+44</option>
+            <option value="351">+351</option>
+            <option value="61">+61</option>
+            <option value="64">+64</option>
+          </select>
           <input
             type="tel"
             id="telefonoInvitado"
@@ -69,12 +103,10 @@
             required
           >
         </div>
-
-        <small>
-          Ingresa solo los 9 dígitos de tu celular.
+        <small id="phoneHelp">
+          Selecciona el código de tu país e ingresa el número de tu celular.
         </small>
       </div>
-
       <button
         type="submit"
         class="access-btn"
@@ -82,28 +114,19 @@
       >
         Ingresar a la invitación
       </button>
-
       <div
         class="access-message"
         id="accessMessage"
         role="alert"
       ></div>
-
     </form>
-
-    <p class="access-help">
-      ¿No reconoces tu número?
-      <br>
-      Comunícate con los novios para verificar tu invitación.
-    </p>
-
   </div>
 </div>
 
 <!-- OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="overlay-card">
-    <div class="eyebrow_overlay">Estás invitado/a al matrimonio de: </div>
+    <div class="eyebrow_overlay"><span id="overlayInviteText">Estás invitado/a al matrimonio de:</span></div>
     <h1 class="title-xl">Kewin <span><br>&<br></span>Isi</h1>
         <div class="buttons">
          <button class="btn" onclick="enterSite(true)">
@@ -188,7 +211,7 @@
       <span><br>&<br></span>
       Isi
     </h1>
-    <p class="lead">
+    <p class="lead" id="heroLead">
       Y queremos invitarte a compartir este momento especial
       con nosotros...
     </p>
@@ -197,7 +220,7 @@
     </section>
 
 <!-- FECHA + COUNTDOWN -->
-<section class="hero-countdown">
+<section class="hero-countdown" data-solo-invitado>
   <div class="hero-countdown-inner">
 
     <p class="hero-esperamos">
@@ -263,7 +286,7 @@
     <h2 class="section-title">Reserva la fecha</h2>
     <div class="events-grid">
       <!-- CEREMONIA -->
-      <div class="event-block">
+      <div class="event-block ceremony-block">
         <div class="event-icon"><img src="ceremonia.svg" alt="Ceremonia"></div>
         <h3 class="event-title">Ceremonia</h3>
         <div class="event-detail">
@@ -305,8 +328,8 @@
 
       
       <!-- RECEPCIÓN -->
-      <div class="event-block">
-        <div class="event-icon"><div class="event-icon"><img src="recepcion.svg" alt="Ceremonia"></div></div>
+      <div class="event-block reception-block" data-solo-invitado>
+        <div class="event-icon"><div class="event-icon"><img src="recepcion.svg" alt="Recepción"></div></div>
         <h3 class="event-title">Recepción</h3>
         <div class="event-detail">
           <span class="event-label">Fecha</span>
@@ -350,7 +373,7 @@
 <!-- ══════════════════════════════════════════
      ITINERARIO
 ══════════════════════════════════════════ -->
-<section class="section-itinerario" id="itinerario" style="--bg-itinerario: url('fondo-itinerario.jpg');">
+<section class="section-itinerario" id="itinerario" data-solo-invitado style="--bg-itinerario: url('fondo-itinerario.jpg');">
   <div class="container center">
      <h2 class="section-title">Itinerario</h2>
     <p class="itinerario-intro">No te pierdas ningún momento de esta ceremonia tan especial para nosotros.</p>
@@ -515,7 +538,7 @@
 <!-- ══════════════════════════════════════════
      DRESS CODE
 ══════════════════════════════════════════ -->
-<section class="section-dresscode" id="dresscode">
+<section class="section-dresscode" id="dresscode" data-solo-invitado>
   <div class="container center">
      <div class="dresscode-icon">
       <img src="dress code.svg" alt="Dress code" loading="lazy"
@@ -613,8 +636,8 @@
 
 <!-- ══════════════════════════════════════════
      MÁS INFO / WHATSAPP
-══════════════════════════════════════════ -->
-<section class="section-info" id="info">
+
+<section class="section-info" id="info" data-solo-invitado>
   <div class="container center">
     <h2 class="section-title">¿Tienes alguna duda?</h2>
     <p class="story-text">Queremos que tengas toda la información que necesites. 
@@ -629,7 +652,7 @@
     </div>
   </div>
 </section>
-
+══════════════════════════════════════════ -->
 <!-- ══════════════════════════════════════════
      FOOTER
 ══════════════════════════════════════════ -->
