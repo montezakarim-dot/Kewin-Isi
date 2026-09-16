@@ -169,7 +169,7 @@ window.addEventListener("load", () => {
 
 // ─── CONFIGURACIÓN ───────────────────────────────────────────
 const APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwGQNl7kiDHABeemBRpeEhP2b5NfEjbe_pu4B8NCICYpNN3MSy2GbL6k9dahgmaoYOSEA/exec";
+  "https://script.google.com/macros/s/AKfycbz03aX9iN0NPl3XpzPyNrPgR0UcMHUbnJEPrcg53iVO8C2AiU1CGp1hNmYfMH9qWFijcQ/exec";
 const DIRECCION_CEREMONIA =
   "Lo Campino 255, Quilicura, Santiago";
 const DIRECCION_RECEPCION =
@@ -183,7 +183,7 @@ let nombreInvitado = "";
 let sexoInvitado = "";
 let telefonoInvitadoValidado = "";
 const ACCESS_CACHE_KEY = "kewinIsiAccess";
-const ACCESS_CACHE_MINUTES = 30;
+const ACCESS_CACHE_MINUTES = 15;
 
 // ══════════════════════════════════════════
 // TELÉFONO INTERNACIONAL
@@ -927,9 +927,8 @@ if (
       );
       return;
     }
-    // ═════════════════════════════════════
-    // OTRO ERROR APPS SCRIPT
-    // ═════════════════════════════════════
+
+    
     message.className =
       "access-message error";
     message.textContent =
@@ -963,59 +962,33 @@ if (
       "No pudimos verificar tu número en este momento. Por favor intenta nuevamente.";
   }
 }
-
   finally {
-
-
     btn.disabled =
       false;
-
-
     btn.textContent =
       "Ingresar a la invitación";
-
   }
 
 }
 
 
-// ══════════════════════════════════════════
-// INICIALIZAR SELECTOR DE PAÍS
-// ══════════════════════════════════════════
-
 document.addEventListener(
-
   "DOMContentLoaded",
-
   () => {
-
     actualizarAyudaTelefono();
-
-  }
-
+   }
 );
 
 
-// ══════════════════════════════════════════
-// SAFARI
-// ══════════════════════════════════════════
-
 window.addEventListener(
-
   "pageshow",
 
   (event) => {
-
-
-    // Safari puede restaurar la página
-    // desde su memoria bfcache.
-
     if (
       event.persisted
     ) {
 
       restaurarAccesoReciente();
-
     }
 
   }
@@ -1412,19 +1385,697 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // ══════════════════════════════════════════
-// POPUP BANCO
+// POPUP REGALOS / TRANSFERENCIA
 // ══════════════════════════════════════════
-function abrirBanco() {
-  const backdrop = document.getElementById("bancoBackdrop");
-  backdrop.classList.add("open");
-  document.body.style.overflow = "hidden";
+
+let regalosDisponibles = [];
+const regalosSeleccionados = new Set();
+
+let regalosConfirmados = [];
+let totalRegalosConfirmados = 0;
+
+function formatearImporte(valor) {
+  return new Intl.NumberFormat("es-CL", {
+    style: "currency",
+    currency: "CLP",
+    maximumFractionDigits: 0
+  }).format(Number(valor) || 0);
 }
 
-function cerrarBanco(e) {
-  if (e && e.target !== document.getElementById("bancoBackdrop")) return;
-  document.getElementById("bancoBackdrop").classList.remove("open");
+
+function abrirBanco() {
+  const backdrop = document.getElementById("bancoBackdrop");
+
+  mostrarPasoSeleccionRegalos();
+
+  backdrop.classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  cargarRegalosDisponibles();
+}
+
+
+function cerrarBanco(evento) {
+  const backdrop = document.getElementById("bancoBackdrop");
+
+  if (evento && evento.target !== backdrop) {
+    return;
+  }
+
+  backdrop.classList.remove("open");
   document.body.style.overflow = "";
 }
+
+
+function mostrarPasoSeleccionRegalos() {
+  const selectionView =
+    document.getElementById("giftSelectionView");
+
+  const bankView =
+    document.getElementById("giftBankView");
+
+  selectionView.hidden = false;
+  bankView.hidden = true;
+
+  regalosSeleccionados.clear();
+  regalosDisponibles = [];
+
+  actualizarResumenRegalos();
+}
+
+
+async function leerRespuestaJSON(response) {
+  const texto = (await response.text())
+    .replace(/^\uFEFF/, "")
+    .trim();
+
+  if (!texto) {
+    throw new Error(
+      "El servidor respondió sin contenido."
+    );
+  }
+
+  try {
+    return JSON.parse(texto);
+  } catch (error) {
+    console.error(
+      "Respuesta no válida de Apps Script:",
+      texto
+    );
+
+    throw new Error(
+      "La respuesta del servidor no es válida."
+    );
+  }
+}
+
+
+async function solicitarRegalosDisponibles() {
+  const parametros = new URLSearchParams();
+
+  parametros.append(
+    "accion",
+    "listarRegalos"
+  );
+
+  // Evita que el navegador reutilice una lista antigua.
+  parametros.append(
+    "_",
+    String(Date.now())
+  );
+
+  const response = await fetch(
+    `${APPS_SCRIPT_URL}?${parametros.toString()}`,
+    {
+      method: "GET",
+      cache: "no-store",
+      redirect: "follow"
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Error HTTP: ${response.status}`
+    );
+  }
+
+  const data =
+    await leerRespuestaJSON(response);
+
+  if (
+    data.resultado !== "ok" ||
+    !Array.isArray(data.regalos)
+  ) {
+    throw new Error(
+      data.mensaje ||
+      "No fue posible cargar los regalos."
+    );
+  }
+
+  return data.regalos;
+}
+
+
+async function cargarRegalosDisponibles() {
+  const status =
+    document.getElementById("giftStatus");
+
+  const list =
+    document.getElementById("giftList");
+
+  status.className = "gift-status";
+  status.textContent =
+    "Cargando regalos disponibles…";
+
+  list.replaceChildren();
+
+  try {
+    regalosDisponibles =
+      await solicitarRegalosDisponibles();
+
+    renderizarRegalos();
+
+  } catch (error) {
+    console.error(
+      "Error cargando regalos:",
+      error
+    );
+
+    status.className =
+      "gift-status error";
+
+    status.innerHTML =
+      "No pudimos cargar la lista de regalos. " +
+      '<button type="button" ' +
+      'class="gift-retry" ' +
+      'onclick="cargarRegalosDisponibles()">' +
+      "Intentar nuevamente" +
+      "</button>";
+  }
+}
+
+
+function renderizarRegalos() {
+  const status =
+    document.getElementById("giftStatus");
+
+  const list =
+    document.getElementById("giftList");
+
+  list.replaceChildren();
+
+  if (regalosDisponibles.length === 0) {
+    status.className =
+      "gift-status empty";
+
+    status.textContent =
+      "Todos los regalos ya fueron elegidos. ¡Muchas gracias! 💜";
+
+    return;
+  }
+
+  status.textContent = "";
+  status.className =
+    "gift-status hidden";
+
+  regalosDisponibles.forEach(
+    regalo => {
+
+      const label =
+        document.createElement("label");
+
+      label.className =
+        "gift-option";
+
+
+      const checkbox =
+        document.createElement("input");
+
+      checkbox.type = "checkbox";
+      checkbox.value =
+        String(regalo.id);
+
+      checkbox.checked =
+        regalosSeleccionados.has(
+          String(regalo.id)
+        );
+
+      checkbox.addEventListener(
+        "change",
+        () => {
+          alternarRegalo(
+            regalo,
+            checkbox.checked
+          );
+        }
+      );
+
+
+      const texto =
+        document.createElement("span");
+
+      texto.className =
+        "gift-option-text";
+
+
+      const descripcion =
+        document.createElement("span");
+
+      descripcion.className =
+        "gift-description";
+
+      // Solo muestra la descripción.
+      // No se muestra "Regalo #1" ni el ID.
+      descripcion.textContent =
+        regalo.descripcion;
+
+
+      const importe =
+        document.createElement("strong");
+
+      importe.className =
+        "gift-amount";
+
+      importe.textContent =
+        formatearImporte(
+          regalo.importe
+        );
+
+
+      texto.append(
+        descripcion,
+        importe
+      );
+
+      label.append(
+        checkbox,
+        texto
+      );
+
+      list.appendChild(label);
+    }
+  );
+}
+
+
+function alternarRegalo(
+  regalo,
+  seleccionado
+) {
+  const id =
+    String(regalo.id);
+
+  if (seleccionado) {
+    regalosSeleccionados.add(id);
+  } else {
+    regalosSeleccionados.delete(id);
+  }
+
+  actualizarResumenRegalos();
+}
+
+
+function obtenerRegalosSeleccionados() {
+  return regalosDisponibles.filter(
+    regalo =>
+      regalosSeleccionados.has(
+        String(regalo.id)
+      )
+  );
+}
+
+
+function actualizarResumenRegalos() {
+  const elegidos =
+    obtenerRegalosSeleccionados();
+
+  const total =
+    elegidos.reduce(
+      (suma, regalo) =>
+        suma +
+        (Number(regalo.importe) || 0),
+      0
+    );
+
+  const haySeleccion =
+    elegidos.length > 0;
+
+  document
+    .getElementById(
+      "giftSelectedTotal"
+    )
+    .textContent =
+      formatearImporte(total);
+
+  document
+    .getElementById(
+      "giftSelectionSummary"
+    )
+    .hidden =
+      !haySeleccion;
+
+  document
+    .getElementById(
+      "giftReserveBtn"
+    )
+    .hidden =
+      !haySeleccion;
+}
+
+
+/*
+ * Esta función resuelve el problema que tenías:
+ *
+ * Google Sheets alcanzaba a guardar la reserva,
+ * pero el navegador no lograba interpretar la
+ * respuesta de Apps Script.
+ *
+ * Ahora se vuelve a consultar la lista. Si los
+ * regalos seleccionados desaparecieron, significa
+ * que fueron reservados correctamente.
+ */
+async function verificarReservaAplicada(ids) {
+  try {
+    const disponibles =
+      await solicitarRegalosDisponibles();
+
+    const idsDisponibles =
+      new Set(
+        disponibles.map(
+          regalo =>
+            String(regalo.id)
+        )
+      );
+
+    return ids.every(
+      id =>
+        !idsDisponibles.has(
+          String(id)
+        )
+    );
+
+  } catch (error) {
+    console.error(
+      "No fue posible verificar la reserva:",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+async function reservarRegalosSeleccionados() {
+  const elegidos =
+    obtenerRegalosSeleccionados();
+
+  if (elegidos.length === 0) {
+    return;
+  }
+
+
+  const nombre =
+    nombreInvitado ||
+    sessionStorage.getItem(
+      "nombreInvitado"
+    ) ||
+    "";
+
+
+  const telefono =
+    telefonoInvitadoValidado ||
+    sessionStorage.getItem(
+      "telefonoInvitado"
+    ) ||
+    "";
+
+
+  const status =
+    document.getElementById(
+      "giftStatus"
+    );
+
+  const btn =
+    document.getElementById(
+      "giftReserveBtn"
+    );
+
+
+  const ids =
+    elegidos.map(
+      regalo =>
+        String(regalo.id)
+    );
+
+
+  if (!nombre) {
+    status.className =
+      "gift-status error";
+
+    status.textContent =
+      "No pudimos identificar tu nombre. Actualiza la página e ingresa nuevamente.";
+
+    return;
+  }
+
+
+  btn.disabled = true;
+  btn.textContent =
+    "Reservando…";
+
+  status.className =
+    "gift-status";
+
+  status.textContent =
+    "Estamos reservando tu selección…";
+
+
+  const datos =
+    new URLSearchParams();
+
+  datos.append(
+    "accion",
+    "reservarRegalos"
+  );
+
+  datos.append(
+    "nombre",
+    nombre
+  );
+
+  datos.append(
+    "telefono",
+    telefono
+  );
+
+  datos.append(
+    "ids",
+    JSON.stringify(ids)
+  );
+
+
+  try {
+    const response =
+      await fetch(
+        APPS_SCRIPT_URL,
+        {
+          method: "POST",
+          body: datos,
+          redirect: "follow"
+        }
+      );
+
+
+    if (!response.ok) {
+      throw new Error(
+        `Error HTTP: ${response.status}`
+      );
+    }
+
+
+    const data =
+      await leerRespuestaJSON(
+        response
+      );
+
+
+    if (
+      data.resultado === "ok"
+    ) {
+      mostrarDatosBancarios(
+        data.regalos || elegidos,
+        Number(data.total)
+      );
+
+      return;
+    }
+
+
+    if (
+      data.resultado ===
+      "no_disponible"
+    ) {
+      status.className =
+        "gift-status error";
+
+      status.textContent =
+        data.mensaje ||
+        "Uno o más regalos ya no están disponibles.";
+
+      regalosSeleccionados.clear();
+
+      await cargarRegalosDisponibles();
+
+      actualizarResumenRegalos();
+
+      return;
+    }
+
+
+    throw new Error(
+      data.mensaje ||
+      "No fue posible reservar los regalos."
+    );
+
+  } catch (error) {
+    console.error(
+      "Error reservando regalos:",
+      error
+    );
+
+
+    /*
+     * Si se guardó en Google Sheets,
+     * pero falló la respuesta, verifica
+     * si los regalos ya desaparecieron.
+     */
+    const reservaAplicada =
+      await verificarReservaAplicada(
+        ids
+      );
+
+
+    if (reservaAplicada) {
+      mostrarDatosBancarios(
+        elegidos
+      );
+
+      return;
+    }
+
+
+    status.className =
+      "gift-status error";
+
+    status.textContent =
+      "No pudimos confirmar la reserva. Los regalos continúan disponibles; intenta nuevamente.";
+
+  } finally {
+    btn.disabled = false;
+
+    btn.textContent =
+      "Regalar mediante transferencia";
+  }
+}
+
+
+function mostrarDatosBancarios(
+  regalos,
+  totalServidor
+) {
+  regalosConfirmados =
+    regalos.map(
+      regalo => ({
+        descripcion:
+          regalo.descripcion,
+
+        importe:
+          Number(
+            regalo.importe
+          ) || 0
+      })
+    );
+
+
+  const totalCalculado =
+    regalosConfirmados.reduce(
+      (suma, regalo) =>
+        suma +
+        regalo.importe,
+      0
+    );
+
+
+  totalRegalosConfirmados =
+    Number.isFinite(
+      totalServidor
+    ) &&
+    totalServidor > 0
+      ? totalServidor
+      : totalCalculado;
+
+
+  const lista =
+    document.getElementById(
+      "giftConfirmedList"
+    );
+
+  lista.replaceChildren();
+
+
+  regalosConfirmados.forEach(
+    regalo => {
+
+      const fila =
+        document.createElement(
+          "div"
+        );
+
+      fila.className =
+        "gift-confirmed-row";
+
+
+      const descripcion =
+        document.createElement(
+          "span"
+        );
+
+      descripcion.textContent =
+        regalo.descripcion;
+
+
+      const importe =
+        document.createElement(
+          "strong"
+        );
+
+      importe.textContent =
+        formatearImporte(
+          regalo.importe
+        );
+
+
+      fila.append(
+        descripcion,
+        importe
+      );
+
+      lista.appendChild(fila);
+    }
+  );
+
+
+  document
+    .getElementById(
+      "giftConfirmedTotal"
+    )
+    .textContent =
+      formatearImporte(
+        totalRegalosConfirmados
+      );
+
+
+  document
+    .getElementById(
+      "giftSelectionView"
+    )
+    .hidden = true;
+
+
+  document
+    .getElementById(
+      "giftBankView"
+    )
+    .hidden = false;
+
+
+  document
+    .getElementById(
+      "bancoPanel"
+    )
+    .scrollTop = 0;
+}
+
 
 // ─── POPUP RSVP ──────────────────────────────────────────────
 let rsvpScrollY = 0;
@@ -1483,38 +2134,109 @@ function cerrarDresscode(e) {
 // Cerrar con tecla Escape
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
+    cerrarBanco();
     cerrarRSVP();
     cerrarDresscode();
   }
 });
 
-// ─── COPIAR DATOS BANCARIOS ───────────────────────────────────
-function copiarTodo() {
-  const texto =
-    `Isidora\n` +
-    `12.345.678-9\n` +
-    `Banco Estado\n` +
-    `Cuenta Vista\n` +
-    `12345678999`;
+// ─── COPIAR MONTO Y DATOS BANCARIOS ─────────────────────────
 
-  navigator.clipboard.writeText(texto).then(() => {
-    mostrarToast();
-  }).catch(() => {
-    const el = document.createElement("textarea");
-    el.value = texto;
-    el.style.cssText = "position:fixed;opacity:0;";
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
-    document.body.removeChild(el);
-    mostrarToast();
-  });
+function copiarTodo() {
+  const titular =
+    document
+      .getElementById("b-titular")
+      .textContent;
+
+  const rut =
+    document
+      .getElementById("b-rut")
+      .textContent;
+
+  const banco =
+    document
+      .getElementById("b-banco")
+      .textContent;
+
+  const tipo =
+    document
+      .getElementById("b-tipo")
+      .textContent;
+
+  const cuenta =
+    document
+      .getElementById("b-cuenta")
+      .textContent;
+
+  const email =
+    document
+      .getElementById("b-email")
+      .textContent;
+
+
+  const texto =
+    `Monto: ${formatearImporte(totalRegalosConfirmados)}\n` +
+    `Titular: ${titular}\n` +
+    `RUT: ${rut}\n` +
+    `Banco: ${banco}\n` +
+    `Tipo: ${tipo}\n` +
+    `N° Cuenta: ${cuenta}\n` +
+    `Email: ${email}`;
+
+
+  navigator.clipboard
+    .writeText(texto)
+    .then(() => {
+      mostrarToast();
+    })
+    .catch(() => {
+
+      const elemento =
+        document.createElement(
+          "textarea"
+        );
+
+      elemento.value = texto;
+
+      elemento.style.cssText =
+        "position:fixed;opacity:0;";
+
+      document.body.appendChild(
+        elemento
+      );
+
+      elemento.select();
+
+      document.execCommand(
+        "copy"
+      );
+
+      document.body.removeChild(
+        elemento
+      );
+
+      mostrarToast();
+    });
 }
 
+
 function mostrarToast() {
-  const toast = document.getElementById("copyToast");
-  toast.classList.add("show");
-  setTimeout(() => toast.classList.remove("show"), 2800);
+  const toast =
+    document.getElementById(
+      "copyToast"
+    );
+
+  toast.classList.add(
+    "show"
+  );
+
+  setTimeout(
+    () =>
+      toast.classList.remove(
+        "show"
+      ),
+    2800
+  );
 }
 
 // ══════════════════════════════════════════

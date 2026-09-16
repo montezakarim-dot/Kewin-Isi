@@ -625,7 +625,7 @@
       ¡Gracias desde el corazón! 💜
     </p>
     <button class="btn-banco" onclick="abrirBanco()">
-      Ver datos bancarios
+      Ver lista de regalos
     </button>
   </div>
 
@@ -668,14 +668,44 @@
 </footer>
 
 <!-- ══════════════════════════════════════════
-     POPUP BANCO
+     POPUP LISTA DE REGALOS / TRANSFERENCIA
 ══════════════════════════════════════════ -->
 <div class="popup-backdrop" id="bancoBackdrop" onclick="cerrarBanco(event)">
   <div class="popup-panel" id="bancoPanel">
     <button class="popup-close" onclick="cerrarBanco()">✕</button>
-    <div class="popup-inner">
-      <div class="eyebrow purple" style="text-align:center;">DATOS BANCARIOS</div>
-      <h2 class="popup-title">💜 Transferencia</h2>
+
+    <div class="popup-inner gift-step" id="giftSelectionView">
+      <div class="eyebrow purple" style="text-align:center;">LISTA DE REGALOS</div>
+      <h2 class="popup-title">💜 Elige tu regalo</h2>
+      <p class="gift-popup-intro">Puedes seleccionar uno o más regalos disponibles.</p>
+
+      <div id="giftStatus" class="gift-status" role="status" aria-live="polite">
+        Cargando regalos disponibles…
+      </div>
+      <div id="giftList" class="gift-list" aria-label="Regalos disponibles"></div>
+
+      <div id="giftSelectionSummary" class="gift-selection-summary" hidden>
+        <span>Total seleccionado</span>
+        <strong id="giftSelectedTotal">$0</strong>
+      </div>
+      <button id="giftReserveBtn" class="btn-copy-all gift-reserve-btn" type="button"
+              onclick="reservarRegalosSeleccionados()" hidden>
+        Regalar mediante transferencia
+      </button>
+    </div>
+
+    <div class="popup-inner gift-step" id="giftBankView" hidden>
+      <div class="eyebrow purple" style="text-align:center;">TRANSFERENCIA</div>
+      <h2 class="popup-title">💜 ¡Gracias por tu regalo!</h2>
+
+      <div class="gift-confirmed-card">
+        <div id="giftConfirmedList" class="gift-confirmed-list"></div>
+        <div class="gift-confirmed-total">
+          <span>Monto a transferir</span>
+          <strong id="giftConfirmedTotal">$0</strong>
+        </div>
+      </div>
+
       <div class="bank-card">
         <div class="bank-row"><span class="bank-label">Titular</span><span class="bank-value" id="b-titular">Isidora Apellido</span></div>
         <div class="bank-row"><span class="bank-label">RUT</span><span class="bank-value" id="b-rut">12.345.678-9</span></div>
@@ -684,8 +714,8 @@
         <div class="bank-row"><span class="bank-label">N° Cuenta</span><span class="bank-value" id="b-cuenta">12345678999</span></div>
         <div class="bank-row"><span class="bank-label">Email</span><span class="bank-value" id="b-email">correo@ejemplo.com</span></div>
       </div>
-      <button class="btn-copy-all" onclick="copiarTodo()">📋 Copiar todos los datos</button>
-      <div id="copyToast" class="copy-toast">¡Datos copiados! ✓</div>
+      <button class="btn-copy-all" onclick="copiarTodo()">📋 Copiar monto y datos bancarios</button>
+      <div id="copyToast" class="copy-toast" role="status">¡Monto y datos copiados! ✓</div>
     </div>
   </div>
 </div>
