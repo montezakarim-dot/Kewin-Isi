@@ -1162,8 +1162,8 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
 .story { max-width: 720px; margin: auto; line-height: 2; }
 
 /* ══════════════════════════════════════════
-   NUESTRA HISTORIA — sin cambios
-══════════════════════════════════════════ */
+   NUESTRA HISTORIA 
+   ══════════════════════════════════════════ */
 .historia-tagline {
   max-width: 640px;
   margin: 0 auto clamp(28px, 5vw, 46px);
@@ -1375,7 +1375,7 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
   position: relative;
   overflow: hidden;
   background: #f8effd;
-  padding: 80px 24px;
+  padding: 95px 24px;
 }
 /* Foto de fondo muy transparente */
 .section-itinerario > .inner-bg {
@@ -1623,7 +1623,7 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
 ══════════════════════════════════════════ */
 .section-dresscode {
   background: #f8effd;
-  padding: 90px 24px;
+  padding: 40px 24px;;
 }
 .dresscode-icon {
   margin: 0 auto 20px;
@@ -1649,7 +1649,7 @@ section:not(.hero):not(.section-itinerario):not(.hero-countdown):not(.section-dr
 .dresscode-poem {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: #745c72;
+  color: #1a011d;
   line-height: 2.2;
   margin-bottom: 36px;
   font-style: italic;
@@ -2344,6 +2344,7 @@ section > .card {
   font-size: 70px;
   line-height: 0.9;
   letter-spacing: 1px;
+  color: #4a0763
 }
 .story-text {
   width: 100%;
@@ -2491,8 +2492,8 @@ section > .card {
   .hero::after,
   .section-itinerario::before,
   .section-itinerario::after {
-    width: 100vw;
-    height: 100vw;
+    width: 120vw;
+    height: 120vw;
   }
   /* Flores countdown y dresscode en móvil */
   .hero-countdown::after,
@@ -2726,4 +2727,100 @@ section + section {
 }
 body.guest-view [data-solo-invitado] {
   display: none !important;
+}
+/* FLORES */
+.hero-countdown::before,
+.hero-countdown::after,
+.section-dresscode::before,
+.section-dresscode::after {
+  z-index: 1 !important;
+  pointer-events: none;
+}
+
+/* No subir todo el contenedor */
+.hero-countdown .hero-countdown-inner,
+.section-dresscode .container {
+  position: relative;
+  z-index: auto !important;
+}
+
+/* SOLO CONTENIDO / TEXTO POR ENCIMA DE LAS FLORES */
+.hero-countdown .hero-esperamos,
+.hero-countdown .fecha-box,
+.hero-countdown .hero-frase-title,
+.hero-countdown .hero-frase,
+.hero-countdown .countdown,
+
+.section-dresscode .dresscode-icon,
+.section-dresscode .section-title,
+.section-dresscode .dresscode-poem,
+.section-dresscode .dresscode-warning,
+.section-dresscode .btn-dresscode {
+  position: relative;
+  z-index: 2 !important;
+}
+
+#detalles::before,
+#detalles::after {
+  opacity: 0.22 !important; 
+  background-size: cover !important;
+}
+
+@media (max-width: 768px) {
+  #detalles::before,
+  #detalles::after {
+    opacity: 0.16 !important;
+  }
+}
+@media (min-width: 769px) {
+
+  body.guest-view #detalles .events-grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 520px);
+    justify-content: center;
+  }
+
+  body.guest-view #detalles .ceremony-block {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+}
+@media (max-width: 768px) {
+
+  .section-dresscode::before,
+  .section-dresscode::after {
+    width: 115px !important;
+    height: 100% !important;
+
+   
+    background-repeat: no-repeat !important;
+    opacity: 1 !important;
+
+    pointer-events: none;
+  }
+
+  /* FLOR IZQUIERDA */
+  .hero-countdown::before {
+    left: -2px !important;
+    right: auto !important;
+    background-position: left center !important;
+  }
+  .section-dresscode::before {
+    left: -40px !important;
+    right: auto !important;
+    background-position: left center !important;
+  }
+  /* FLOR DERECHA */
+  .hero-countdown::after {
+    right: -2px !important;
+    left: auto !important;
+    background-position: right center !important;
+  }
+  .section-dresscode::after {
+    right: -40px !important;
+    left: auto !important;
+    background-position: right center !important;
+  }
+
 }
