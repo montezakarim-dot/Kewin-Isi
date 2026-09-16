@@ -2985,3 +2985,50 @@ body.guest-view [data-solo-invitado] {
   }
 
 }
+/* =========================================================
+   POPUP DE REGALOS POR ENCIMA DEL MENÚ
+   ========================================================= */
+
+.popup-backdrop {
+  z-index: 30000 !important;
+}
+
+.popup-panel {
+  z-index: 30001 !important;
+  position: relative;
+}
+
+/* Mantiene visible la X aunque se desplace el popup */
+.popup-close {
+  position: sticky !important;
+  top: 12px !important;
+  right: auto !important;
+
+  display: flex !important;
+  margin: 12px 12px -44px auto !important;
+
+  z-index: 30002 !important;
+  pointer-events: auto !important;
+
+  box-shadow: 0 3px 12px rgba(74, 7, 99, 0.25);
+}
+
+/* Ajuste para celulares */
+@media (max-width: 600px) {
+  .popup-backdrop {
+    padding: 10px !important;
+    align-items: center !important;
+  }
+
+  .popup-panel {
+    width: 100% !important;
+    max-height: 92svh !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  .popup-close {
+    top: 10px !important;
+    margin-right: 10px !important;
+  }
+}
